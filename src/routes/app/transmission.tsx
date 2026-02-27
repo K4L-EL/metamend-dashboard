@@ -40,7 +40,7 @@ function TransmissionPage() {
   return (
     <div>
       <Header title="Source Investigation" subtitle="Transmission network and outbreak chain analysis" />
-      <div className="space-y-6 p-8">
+      <div className="space-y-4 p-4 sm:space-y-6 sm:p-8">
         {/* Organism filters */}
         <div className="flex items-center gap-2">
           {["MRSA", "C. difficile"].map((org) => (

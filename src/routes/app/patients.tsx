@@ -70,7 +70,7 @@ function PatientsPage() {
   return (
     <div>
       <Header title="Patients" subtitle="Patient infection status and risk profiles" />
-      <div className="space-y-6 p-8">
+      <div className="space-y-4 p-4 sm:space-y-6 sm:p-8">
         <Card>
           <CardHeader>
             <CardTitle>All Patients</CardTitle>

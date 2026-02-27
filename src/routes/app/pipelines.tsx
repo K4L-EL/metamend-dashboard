@@ -70,7 +70,7 @@ function PipelinesPage() {
   return (
     <div>
       <Header title="Data Pipelines" subtitle="Visual data flow editor for infection intelligence" />
-      <div className="space-y-6 p-8">
+      <div className="space-y-4 p-4 sm:space-y-6 sm:p-8">
         {/* Stats */}
         <div className="grid gap-4 sm:grid-cols-3">
           <StatCard

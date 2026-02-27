@@ -40,7 +40,7 @@ function ResistancePage() {
   return (
     <div>
       <Header title="Antimicrobial Resistance" subtitle="Resistance patterns and prescribing surveillance" />
-      <div className="space-y-6 p-8">
+      <div className="space-y-4 p-4 sm:space-y-6 sm:p-8">
         {summaries.loading ? (
           <Loading />
         ) : (

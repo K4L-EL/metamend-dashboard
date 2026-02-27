@@ -1,6 +1,7 @@
 import { Html } from "@react-three/drei";
 import type { LocationRisk, Patient } from "../../types";
 import { Bed } from "./bed";
+import { useMapTheme } from "./hospital-scene";
 
 interface WardRoomProps {
   location: LocationRisk;
@@ -32,11 +33,7 @@ function generateBedPositions(
   for (let row = 0; row < layout.rows; row++) {
     for (let col = 0; col < layout.cols; col++) {
       beds.push({
-        position: [
-          startX + col * spacingX,
-          floorY + 0.08,
-          startZ + row * spacingZ,
-        ],
+        position: [startX + col * spacingX, floorY + 0.08, startZ + row * spacingZ],
         bedIndex: idx++,
       });
     }
@@ -52,6 +49,8 @@ export function WardRoom({
   bedLayout,
   onSelectPatient,
 }: WardRoomProps) {
+  const theme = useMapTheme();
+  const light = theme === "light";
   const bedPositions = generateBedPositions(position, size, bedLayout);
   const totalBeds = bedLayout.cols * bedLayout.rows;
   const floorY = position[1];
@@ -63,59 +62,39 @@ export function WardRoom({
 
   const assignedPatients = patients.slice(0, totalBeds);
 
+  const wallColor = light ? "#a3a3a3" : "#e5e5e5";
+  const wallOpacity = light ? 0.2 : 0.15;
+
   return (
     <group>
-      {/* Ward floor */}
-      <mesh
-        rotation={[-Math.PI / 2, 0, 0]}
-        position={[position[0], floorY + 0.015, position[2]]}
-        receiveShadow
-      >
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[position[0], floorY + 0.015, position[2]]} receiveShadow>
         <planeGeometry args={[size[0], size[2]]} />
-        <meshStandardMaterial color="#1a1a1a" roughness={0.9} transparent opacity={0.9} />
+        <meshStandardMaterial color={light ? "#d4d4d4" : "#1a1a1a"} roughness={0.9} transparent opacity={0.9} />
       </mesh>
 
-      {/* Ward walls — tall, grey, transparent */}
-      <mesh position={[position[0], floorY + 0.5, position[2] - size[2] / 2]}>
-        <boxGeometry args={[size[0], 1, 0.025]} />
-        <meshPhysicalMaterial color="#e5e5e5" roughness={0.2} transparent opacity={0.15} depthWrite={false} />
-      </mesh>
-      <mesh position={[position[0], floorY + 0.5, position[2] + size[2] / 2]}>
-        <boxGeometry args={[size[0], 1, 0.025]} />
-        <meshPhysicalMaterial color="#e5e5e5" roughness={0.2} transparent opacity={0.15} depthWrite={false} />
-      </mesh>
-      <mesh position={[position[0] - size[0] / 2, floorY + 0.5, position[2]]}>
-        <boxGeometry args={[0.025, 1, size[2]]} />
-        <meshPhysicalMaterial color="#e5e5e5" roughness={0.2} transparent opacity={0.15} depthWrite={false} />
-      </mesh>
-      <mesh position={[position[0] + size[0] / 2, floorY + 0.5, position[2]]}>
-        <boxGeometry args={[0.025, 1, size[2]]} />
-        <meshPhysicalMaterial color="#e5e5e5" roughness={0.2} transparent opacity={0.15} depthWrite={false} />
-      </mesh>
-
-      {/* Beds */}
-      {bedPositions.map((bed, i) => (
-        <Bed
-          key={i}
-          position={bed.position}
-          patient={assignedPatients[i] ?? null}
-          bedId={bedIds[i]!}
-          onSelect={onSelectPatient}
-        />
+      {/* Walls */}
+      {[
+        { pos: [position[0], floorY + 0.5, position[2] - size[2] / 2] as [number, number, number], geo: [size[0], 1, 0.025] as [number, number, number] },
+        { pos: [position[0], floorY + 0.5, position[2] + size[2] / 2] as [number, number, number], geo: [size[0], 1, 0.025] as [number, number, number] },
+        { pos: [position[0] - size[0] / 2, floorY + 0.5, position[2]] as [number, number, number], geo: [0.025, 1, size[2]] as [number, number, number] },
+        { pos: [position[0] + size[0] / 2, floorY + 0.5, position[2]] as [number, number, number], geo: [0.025, 1, size[2]] as [number, number, number] },
+      ].map((wall, i) => (
+        <mesh key={i} position={wall.pos}>
+          <boxGeometry args={wall.geo} />
+          <meshPhysicalMaterial color={wallColor} roughness={0.2} transparent opacity={wallOpacity} depthWrite={false} />
+        </mesh>
       ))}
 
-      {/* Ward label floating above */}
-      <Html
-        position={[position[0], floorY + 1.25, position[2]]}
-        center
-        distanceFactor={14}
-        style={{ pointerEvents: "none" }}
-      >
+      {bedPositions.map((bed, i) => (
+        <Bed key={i} position={bed.position} patient={assignedPatients[i] ?? null} bedId={bedIds[i]!} onSelect={onSelectPatient} />
+      ))}
+
+      <Html position={[position[0], floorY + 1.25, position[2]]} center distanceFactor={14} style={{ pointerEvents: "none" }}>
         <div className="whitespace-nowrap text-center">
-          <p className="text-[11px] font-semibold text-white/90 drop-shadow-md">
+          <p className={`text-[11px] font-semibold drop-shadow-md ${light ? "text-neutral-800" : "text-white/90"}`}>
             {location.name}
           </p>
-          <p className="text-[8px] text-white/40">
+          <p className={`text-[8px] ${light ? "text-neutral-500" : "text-white/40"}`}>
             {patients.length}/{totalBeds} occupied · {(location.riskScore * 100).toFixed(0)}% risk
           </p>
         </div>

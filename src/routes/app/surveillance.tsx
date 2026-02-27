@@ -55,7 +55,7 @@ function SurveillancePage() {
   return (
     <div>
       <Header title="Surveillance" subtitle="Real-time infection monitoring and tracking" />
-      <div className="space-y-6 p-8">
+      <div className="space-y-4 p-4 sm:space-y-6 sm:p-8">
         <div className="grid gap-4 sm:grid-cols-3">
           <MetricCard label="Total Active" value={infections.data?.filter((i) => i.status === "Active").length ?? 0} accent="bg-neutral-900" />
           <MetricCard label="HAI Cases" value={infections.data?.filter((i) => i.isHai).length ?? 0} accent="bg-neutral-600" />

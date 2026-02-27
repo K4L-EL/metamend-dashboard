@@ -4,6 +4,7 @@ import { Html } from "@react-three/drei";
 import type { Mesh } from "three";
 import { Color, MathUtils } from "three";
 import type { Patient } from "../../types";
+import { useMapTheme } from "./hospital-scene";
 
 interface BedProps {
   position: [number, number, number];
@@ -12,20 +13,16 @@ interface BedProps {
   onSelect?: (patient: Patient) => void;
 }
 
-const COLOR_FRAME = new Color("#171717");
-const COLOR_PILLOW = new Color("#404040");
-const COLOR_EMPTY_BED = new Color("#262626");
-
 const STATUS_RED = new Color("#dc2626");
 const STATUS_YELLOW = new Color("#ca8a04");
 const STATUS_GREEN = new Color("#16a34a");
 const STATUS_EMPTY_INDICATOR = new Color("#404040");
 
-function getBedColor(patient: Patient | null): Color {
-  if (!patient) return COLOR_EMPTY_BED;
-  if (patient.activeInfections > 0) return new Color("#2a1a1a");
-  if (patient.riskScore > 0.6) return new Color("#2a2a1a");
-  return new Color("#1a2a1a");
+function getBedColor(patient: Patient | null, light: boolean): Color {
+  if (!patient) return new Color(light ? "#d4d4d4" : "#262626");
+  if (patient.activeInfections > 0) return new Color(light ? "#fecaca" : "#2a1a1a");
+  if (patient.riskScore > 0.6) return new Color(light ? "#fef9c3" : "#2a2a1a");
+  return new Color(light ? "#dcfce7" : "#1a2a1a");
 }
 
 function getIndicatorColor(patient: Patient | null): Color {
@@ -44,13 +41,19 @@ function getStatusLabel(patient: Patient | null): string {
 }
 
 export function Bed({ position, patient, bedId, onSelect }: BedProps) {
+  const theme = useMapTheme();
+  const light = theme === "light";
   const groupRef = useRef<Mesh>(null);
   const indicatorRef = useRef<Mesh>(null);
   const [hovered, setHovered] = useState(false);
-  const bedColor = useMemo(() => getBedColor(patient), [patient]);
+  const bedColor = useMemo(() => getBedColor(patient, light), [patient, light]);
   const indicatorColor = useMemo(() => getIndicatorColor(patient), [patient]);
   const isInfected = patient !== null && patient.activeInfections > 0;
   const hasPatient = patient !== null;
+
+  const frameColor = useMemo(() => new Color(light ? "#a3a3a3" : "#171717"), [light]);
+  const pillowColor = useMemo(() => new Color(light ? "#737373" : "#404040"), [light]);
+  const emptyBedColor = useMemo(() => new Color(light ? "#d4d4d4" : "#262626"), [light]);
 
   useFrame(({ clock }, delta) => {
     if (!groupRef.current) return;
@@ -79,12 +82,8 @@ export function Bed({ position, patient, bedId, onSelect }: BedProps) {
 
   return (
     <group>
-      {/* Status indicator dot floating above the bed */}
       {hasPatient && (
-        <mesh
-          ref={indicatorRef}
-          position={[position[0], position[1] + 0.3, position[2]]}
-        >
+        <mesh ref={indicatorRef} position={[position[0], position[1] + 0.3, position[2]]}>
           <sphereGeometry args={[0.045, 12, 12]} />
           <meshStandardMaterial
             color={indicatorColor}
@@ -99,23 +98,13 @@ export function Bed({ position, patient, bedId, onSelect }: BedProps) {
       <group
         ref={groupRef}
         position={position}
-        onPointerOver={(e) => {
-          e.stopPropagation();
-          setHovered(true);
-          document.body.style.cursor = patient ? "pointer" : "default";
-        }}
-        onPointerOut={() => {
-          setHovered(false);
-          document.body.style.cursor = "default";
-        }}
-        onClick={(e) => {
-          e.stopPropagation();
-          if (patient && onSelect) onSelect(patient);
-        }}
+        onPointerOver={(e) => { e.stopPropagation(); setHovered(true); document.body.style.cursor = patient ? "pointer" : "default"; }}
+        onPointerOut={() => { setHovered(false); document.body.style.cursor = "default"; }}
+        onClick={(e) => { e.stopPropagation(); if (patient && onSelect) onSelect(patient); }}
       >
         <mesh position={[0, 0, 0]} castShadow receiveShadow>
           <boxGeometry args={[0.38, 0.06, 0.7]} />
-          <meshStandardMaterial color={COLOR_FRAME} roughness={0.8} />
+          <meshStandardMaterial color={frameColor} roughness={0.8} />
         </mesh>
 
         <mesh position={[0, 0.05, 0]} castShadow>
@@ -131,53 +120,44 @@ export function Bed({ position, patient, bedId, onSelect }: BedProps) {
 
         <mesh position={[0, 0.09, -0.22]} castShadow>
           <boxGeometry args={[0.24, 0.04, 0.15]} />
-          <meshStandardMaterial
-            color={patient ? COLOR_PILLOW : COLOR_FRAME}
-            roughness={0.7}
-          />
+          <meshStandardMaterial color={patient ? pillowColor : frameColor} roughness={0.7} />
         </mesh>
 
         <mesh position={[0, 0.12, -0.34]}>
           <boxGeometry args={[0.36, 0.16, 0.02]} />
-          <meshStandardMaterial color={COLOR_FRAME} roughness={0.6} metalness={0.2} />
+          <meshStandardMaterial color={frameColor} roughness={0.6} metalness={0.2} />
         </mesh>
       </group>
 
       {hovered && (
-        <Html
-          position={[position[0], position[1] + 0.5, position[2]]}
-          center
-          distanceFactor={8}
-          style={{ pointerEvents: "none" }}
-        >
-          <div className="w-44 rounded-lg border border-neutral-700 bg-neutral-900 px-3 py-2.5 shadow-xl">
+        <Html position={[position[0], position[1] + 0.5, position[2]]} center distanceFactor={8} style={{ pointerEvents: "none" }}>
+          <div className={`w-44 rounded-lg border px-3 py-2.5 shadow-xl ${
+            light ? "border-neutral-300 bg-white" : "border-neutral-700 bg-neutral-900"
+          }`}>
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-medium text-neutral-400">Bed {bedId}</span>
-              <span className="text-[9px] font-semibold text-neutral-300">
+              <span className={`text-[10px] font-medium ${light ? "text-neutral-500" : "text-neutral-400"}`}>Bed {bedId}</span>
+              <span className={`text-[9px] font-semibold ${light ? "text-neutral-700" : "text-neutral-300"}`}>
                 {getStatusLabel(patient)}
               </span>
             </div>
             {patient ? (
               <div className="mt-1.5">
-                <p className="text-[11px] font-semibold text-white">{patient.name}</p>
-                <p className="text-[9px] text-neutral-400">{patient.age}y · {patient.gender}</p>
+                <p className={`text-[11px] font-semibold ${light ? "text-neutral-900" : "text-white"}`}>{patient.name}</p>
+                <p className={`text-[9px] ${light ? "text-neutral-500" : "text-neutral-400"}`}>{patient.age}y · {patient.gender}</p>
                 <div className="mt-1.5 flex items-center gap-2">
                   <div className="flex-1">
-                    <div className="h-1 overflow-hidden rounded-full bg-neutral-700">
-                      <div
-                        className="h-full rounded-full bg-neutral-400"
-                        style={{ width: `${patient.riskScore * 100}%` }}
-                      />
+                    <div className={`h-1 overflow-hidden rounded-full ${light ? "bg-neutral-200" : "bg-neutral-700"}`}>
+                      <div className={`h-full rounded-full ${light ? "bg-neutral-500" : "bg-neutral-400"}`} style={{ width: `${patient.riskScore * 100}%` }} />
                     </div>
                   </div>
-                  <span className="text-[9px] tabular-nums text-neutral-400">
+                  <span className={`text-[9px] tabular-nums ${light ? "text-neutral-500" : "text-neutral-400"}`}>
                     {(patient.riskScore * 100).toFixed(0)}%
                   </span>
                 </div>
                 {patient.organisms.length > 0 && (
                   <div className="mt-1 flex flex-wrap gap-1">
                     {patient.organisms.map((org) => (
-                      <span key={org} className="rounded bg-neutral-700 px-1 py-0.5 text-[8px] text-neutral-300">
+                      <span key={org} className={`rounded px-1 py-0.5 text-[8px] ${light ? "bg-neutral-200 text-neutral-600" : "bg-neutral-700 text-neutral-300"}`}>
                         {org}
                       </span>
                     ))}
@@ -185,7 +165,7 @@ export function Bed({ position, patient, bedId, onSelect }: BedProps) {
                 )}
               </div>
             ) : (
-              <p className="mt-1 text-[10px] text-neutral-500">Unoccupied</p>
+              <p className={`mt-1 text-[10px] ${light ? "text-neutral-400" : "text-neutral-500"}`}>Unoccupied</p>
             )}
           </div>
         </Html>

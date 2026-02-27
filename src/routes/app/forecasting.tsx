@@ -34,7 +34,7 @@ function ForecastingPage() {
         title="Forecasting"
         subtitle="Risk analytics and predictive models"
       />
-      <div className="space-y-6 p-8">
+      <div className="space-y-4 p-4 sm:space-y-6 sm:p-8">
         <div className="grid gap-5 lg:grid-cols-2">
           {trends.data && <ForecastChart data={trends.data} />}
           {locationRisks.data && (

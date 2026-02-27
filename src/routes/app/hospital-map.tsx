@@ -16,7 +16,7 @@ function HospitalMapPage() {
   const isLoading = locations.loading || patients.loading;
 
   return (
-    <div className="flex h-screen flex-col">
+    <div className="flex h-full flex-col">
       <Header
         title="Hospital Map"
         subtitle="3D bed-level infection risk visualization"

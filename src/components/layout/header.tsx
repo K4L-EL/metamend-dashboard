@@ -1,5 +1,6 @@
-import { Bell, ChevronRight, Search } from "lucide-react";
+import { Bell, ChevronRight, Menu, Search } from "lucide-react";
 import { useRouterState } from "@tanstack/react-router";
+import { useSidebar } from "./sidebar-context";
 
 interface HeaderProps {
   title: string;
@@ -18,33 +19,43 @@ function useBreadcrumbs() {
 
 export function Header({ title, subtitle }: HeaderProps) {
   const crumbs = useBreadcrumbs();
+  const { openMobile } = useSidebar();
 
   return (
-    <header className="flex h-[52px] items-center justify-between border-b border-neutral-200 bg-white px-8 shadow-sm">
-      <div className="min-w-0">
-        <div className="mb-0.5 flex items-center gap-1">
-          {crumbs.map((crumb, i) => (
-            <span key={i} className="flex items-center gap-1">
-              {i > 0 && <ChevronRight className="h-2.5 w-2.5 text-neutral-300" strokeWidth={2} />}
-              <span className={crumb.isLast ? "text-[10px] font-medium text-neutral-600" : "text-[10px] text-neutral-400"}>
-                {crumb.label}
+    <header className="flex h-[52px] items-center justify-between border-b border-neutral-200 bg-white px-4 shadow-sm sm:px-8">
+      <div className="flex items-center gap-3 min-w-0">
+        <button
+          onClick={openMobile}
+          className="rounded-lg p-2 text-neutral-500 transition-colors hover:bg-neutral-100 hover:text-neutral-700 md:hidden"
+        >
+          <Menu className="h-5 w-5" strokeWidth={1.8} />
+        </button>
+
+        <div className="min-w-0">
+          <div className="mb-0.5 hidden items-center gap-1 sm:flex">
+            {crumbs.map((crumb, i) => (
+              <span key={i} className="flex items-center gap-1">
+                {i > 0 && <ChevronRight className="h-2.5 w-2.5 text-neutral-300" strokeWidth={2} />}
+                <span className={crumb.isLast ? "text-[10px] font-medium text-neutral-600" : "text-[10px] text-neutral-400"}>
+                  {crumb.label}
+                </span>
               </span>
-            </span>
-          ))}
-        </div>
-        <div className="flex items-center gap-3">
-          <h1 className="text-[14px] font-semibold tracking-tight text-neutral-900">{title}</h1>
-          {subtitle && (
-            <>
-              <div className="h-4 w-px bg-neutral-200" />
-              <p className="text-[11px] text-neutral-500">{subtitle}</p>
-            </>
-          )}
+            ))}
+          </div>
+          <div className="flex items-center gap-3">
+            <h1 className="text-[14px] font-semibold tracking-tight text-neutral-900">{title}</h1>
+            {subtitle && (
+              <>
+                <div className="hidden h-4 w-px bg-neutral-200 sm:block" />
+                <p className="hidden text-[11px] text-neutral-500 sm:block">{subtitle}</p>
+              </>
+            )}
+          </div>
         </div>
       </div>
 
       <div className="flex items-center gap-1">
-        <button className="rounded-lg p-2 text-neutral-500 transition-colors hover:bg-neutral-100 hover:text-neutral-700">
+        <button className="hidden rounded-lg p-2 text-neutral-500 transition-colors hover:bg-neutral-100 hover:text-neutral-700 sm:block">
           <Search className="h-4 w-4" strokeWidth={1.8} />
         </button>
         <button className="relative rounded-lg p-2 text-neutral-500 transition-colors hover:bg-neutral-100 hover:text-neutral-700">

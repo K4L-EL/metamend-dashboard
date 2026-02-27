@@ -61,7 +61,7 @@ function AlertsPage() {
   return (
     <div>
       <Header title="Alerts" subtitle="System notifications and warnings" />
-      <div className="p-8">
+      <div className="p-4 sm:p-8">
         <div className="mb-6 flex justify-end">
           <Button size="sm" onClick={() => setOpen(true)}>
             <Plus className="h-3.5 w-3.5" /> Create Alert

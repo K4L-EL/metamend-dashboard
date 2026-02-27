@@ -91,7 +91,7 @@ function ScreeningPage() {
   return (
     <div>
       <Header title="Screening Compliance" subtitle="Admission screening and compliance tracking" />
-      <div className="space-y-6 p-8">
+      <div className="space-y-4 p-4 sm:space-y-6 sm:p-8">
         {compliance.loading ? (
           <Loading />
         ) : (

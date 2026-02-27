@@ -60,7 +60,7 @@ function OutbreaksPage() {
   return (
     <div>
       <Header title="Outbreaks" subtitle="Outbreak detection and investigation tracking" />
-      <div className="space-y-6 p-8">
+      <div className="space-y-4 p-4 sm:space-y-6 sm:p-8">
         <div className="flex items-center justify-between">
           <div className="grid flex-1 gap-4 sm:grid-cols-3">
             <MetricCard label="Active" value={outbreaks.data?.filter((o) => o.status === "Active").length ?? 0} shade="bg-neutral-900" />
