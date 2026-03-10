@@ -129,7 +129,7 @@ export function HospitalFloor({ locations, patients, split, onSelectPatient }: H
         </mesh>
         {([[-8, -6], [8, -6], [-8, 6], [8, 6]] as const).map(([x, z], i) => (
           <mesh key={`pillar-${i}`} position={[x, slabY, z]}>
-            <boxGeometry args={[0.15, FLOOR_GAP - 0.1, 0.15]} />
+            <cylinderGeometry args={[0.08, 0.08, FLOOR_GAP - 0.1, 12]} />
             <meshStandardMaterial color={light ? "#a3a3a3" : "#1a1a1a"} roughness={0.8} />
           </mesh>
         ))}

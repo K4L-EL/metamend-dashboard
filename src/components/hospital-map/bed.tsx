@@ -1,6 +1,6 @@
 import { useState, useRef, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
-import { Html } from "@react-three/drei";
+import { Html, RoundedBox } from "@react-three/drei";
 import type { Mesh } from "three";
 import { Color, MathUtils } from "three";
 import type { Patient } from "../../types";
@@ -102,13 +102,13 @@ export function Bed({ position, patient, bedId, onSelect }: BedProps) {
         onPointerOut={() => { setHovered(false); document.body.style.cursor = "default"; }}
         onClick={(e) => { e.stopPropagation(); if (patient && onSelect) onSelect(patient); }}
       >
-        <mesh position={[0, 0, 0]} castShadow receiveShadow>
-          <boxGeometry args={[0.38, 0.06, 0.7]} />
+        {/* Frame */}
+        <RoundedBox args={[0.38, 0.06, 0.7]} radius={0.02} smoothness={4} position={[0, 0, 0]} castShadow receiveShadow>
           <meshStandardMaterial color={frameColor} roughness={0.8} />
-        </mesh>
+        </RoundedBox>
 
-        <mesh position={[0, 0.05, 0]} castShadow>
-          <boxGeometry args={[0.34, 0.05, 0.64]} />
+        {/* Mattress */}
+        <RoundedBox args={[0.34, 0.05, 0.64]} radius={0.02} smoothness={4} position={[0, 0.05, 0]} castShadow>
           <meshStandardMaterial
             color={bedColor}
             emissive={bedColor}
@@ -116,17 +116,17 @@ export function Bed({ position, patient, bedId, onSelect }: BedProps) {
             roughness={0.5}
             metalness={0.05}
           />
-        </mesh>
+        </RoundedBox>
 
-        <mesh position={[0, 0.09, -0.22]} castShadow>
-          <boxGeometry args={[0.24, 0.04, 0.15]} />
+        {/* Pillow */}
+        <RoundedBox args={[0.24, 0.04, 0.15]} radius={0.015} smoothness={4} position={[0, 0.09, -0.22]} castShadow>
           <meshStandardMaterial color={patient ? pillowColor : frameColor} roughness={0.7} />
-        </mesh>
+        </RoundedBox>
 
-        <mesh position={[0, 0.12, -0.34]}>
-          <boxGeometry args={[0.36, 0.16, 0.02]} />
+        {/* Headboard */}
+        <RoundedBox args={[0.36, 0.16, 0.02]} radius={0.01} smoothness={3} position={[0, 0.12, -0.34]}>
           <meshStandardMaterial color={frameColor} roughness={0.6} metalness={0.2} />
-        </mesh>
+        </RoundedBox>
       </group>
 
       {hovered && (
