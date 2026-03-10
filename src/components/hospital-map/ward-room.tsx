@@ -1,4 +1,4 @@
-import { Html } from "@react-three/drei";
+import { Html, Edges } from "@react-three/drei";
 import type { LocationRisk, Patient } from "../../types";
 import { Bed } from "./bed";
 import { useMapTheme } from "./hospital-scene";
@@ -62,8 +62,8 @@ export function WardRoom({
 
   const assignedPatients = patients.slice(0, totalBeds);
 
-  const wallColor = light ? "#a3a3a3" : "#e5e5e5";
-  const wallOpacity = light ? 0.2 : 0.15;
+  const wallColor = light ? "#a3a3a3" : "#a3a3a3";
+  const wallOpacity = light ? 0.2 : 0.35;
 
   return (
     <group>
@@ -74,14 +74,15 @@ export function WardRoom({
 
       {/* Walls */}
       {[
-        { pos: [position[0], floorY + 0.5, position[2] - size[2] / 2] as [number, number, number], geo: [size[0], 1, 0.025] as [number, number, number] },
-        { pos: [position[0], floorY + 0.5, position[2] + size[2] / 2] as [number, number, number], geo: [size[0], 1, 0.025] as [number, number, number] },
-        { pos: [position[0] - size[0] / 2, floorY + 0.5, position[2]] as [number, number, number], geo: [0.025, 1, size[2]] as [number, number, number] },
-        { pos: [position[0] + size[0] / 2, floorY + 0.5, position[2]] as [number, number, number], geo: [0.025, 1, size[2]] as [number, number, number] },
+        { pos: [position[0], floorY + 0.5, position[2] - size[2] / 2] as [number, number, number], geo: [size[0], 1, 0.04] as [number, number, number] },
+        { pos: [position[0], floorY + 0.5, position[2] + size[2] / 2] as [number, number, number], geo: [size[0], 1, 0.04] as [number, number, number] },
+        { pos: [position[0] - size[0] / 2, floorY + 0.5, position[2]] as [number, number, number], geo: [0.04, 1, size[2]] as [number, number, number] },
+        { pos: [position[0] + size[0] / 2, floorY + 0.5, position[2]] as [number, number, number], geo: [0.04, 1, size[2]] as [number, number, number] },
       ].map((wall, i) => (
         <mesh key={i} position={wall.pos}>
           <boxGeometry args={wall.geo} />
           <meshPhysicalMaterial color={wallColor} roughness={0.2} transparent opacity={wallOpacity} depthWrite={false} />
+          <Edges threshold={15} color={light ? "#d4d4d4" : "#525252"} />
         </mesh>
       ))}
 

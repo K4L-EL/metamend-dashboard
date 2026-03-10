@@ -1,34 +1,34 @@
 import { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import { MathUtils } from "three";
-import type { Group } from "three";
+import type { Group, Mesh } from "three";
 import type { LocationRisk, Patient } from "../../types";
 import { WardRoom } from "./ward-room";
 import { useMapTheme } from "./hospital-scene";
 
-interface WardConfig {
+export interface WardConfig {
   position: [number, number, number];
   size: [number, number, number];
   bedLayout: { cols: number; rows: number };
 }
 
-const FLOOR_GAP = 5;
+export const FLOOR_GAP = 5;
 
-const FLOOR1_LAYOUT: Record<string, WardConfig> = {
+export const FLOOR1_LAYOUT: Record<string, WardConfig> = {
   LOC001: { position: [-5, 0, -3.5], size: [3.5, 1, 3], bedLayout: { cols: 4, rows: 2 } },
   LOC002: { position: [-5, 0, 1], size: [3.5, 1, 3], bedLayout: { cols: 3, rows: 2 } },
   LOC003: { position: [0, 0, -4.5], size: [3.8, 1, 2.2], bedLayout: { cols: 4, rows: 2 } },
   LOC004: { position: [0, 0, -1.2], size: [3.8, 1, 2.2], bedLayout: { cols: 4, rows: 2 } },
 };
 
-const FLOOR2_LAYOUT: Record<string, WardConfig> = {
+export const FLOOR2_LAYOUT: Record<string, WardConfig> = {
   LOC005: { position: [0, FLOOR_GAP, 2], size: [3.8, 1, 2.2], bedLayout: { cols: 4, rows: 2 } },
   LOC006: { position: [5, FLOOR_GAP, -3], size: [3.2, 1, 2.8], bedLayout: { cols: 3, rows: 2 } },
   LOC007: { position: [5, FLOOR_GAP, 1.5], size: [3.2, 1, 3.2], bedLayout: { cols: 4, rows: 2 } },
   LOC008: { position: [-5, FLOOR_GAP, 4.8], size: [3, 1, 2], bedLayout: { cols: 3, rows: 2 } },
 };
 
-const WARD_NAME_MAP: Record<string, string> = {
+export const WARD_NAME_MAP: Record<string, string> = {
   LOC001: "ICU-A",
   LOC002: "ICU-B",
   LOC003: "Ward 2A",
@@ -53,20 +53,20 @@ function FloorBase({ y }: { y: number }) {
     <>
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, y - 0.01, 0]} receiveShadow>
         <planeGeometry args={[22, 18]} />
-        <meshStandardMaterial color={light ? "#e5e5e5" : "#0a0a0a"} roughness={0.95} />
+        <meshStandardMaterial color={light ? "#e5e5e5" : "#141414"} roughness={0.95} />
       </mesh>
-      <gridHelper args={[22, 22, light ? "#d4d4d4" : "#171717", light ? "#d4d4d4" : "#171717"]} position={[0, y + 0.003, 0]} />
+      <gridHelper args={[22, 22, light ? "#d4d4d4" : "#262626", light ? "#d4d4d4" : "#262626"]} position={[0, y + 0.003, 0]} />
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[-2, y + 0.005, 0]}>
         <planeGeometry args={[0.8, 16]} />
-        <meshStandardMaterial color={light ? "#d4d4d4" : "#0d0d0d"} roughness={0.9} />
+        <meshStandardMaterial color={light ? "#d4d4d4" : "#171717"} roughness={0.9} />
       </mesh>
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[2.5, y + 0.005, 0]}>
         <planeGeometry args={[0.6, 16]} />
-        <meshStandardMaterial color={light ? "#d4d4d4" : "#0d0d0d"} roughness={0.9} />
+        <meshStandardMaterial color={light ? "#d4d4d4" : "#171717"} roughness={0.9} />
       </mesh>
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, y + 0.005, -0.2]}>
         <planeGeometry args={[18, 0.5]} />
-        <meshStandardMaterial color={light ? "#d4d4d4" : "#0d0d0d"} roughness={0.9} />
+        <meshStandardMaterial color={light ? "#d4d4d4" : "#171717"} roughness={0.9} />
       </mesh>
     </>
   );
@@ -75,6 +75,8 @@ function FloorBase({ y }: { y: number }) {
 export function HospitalFloor({ locations, patients, split, onSelectPatient }: HospitalFloorProps) {
   const floor1Ref = useRef<Group>(null);
   const floor2Ref = useRef<Group>(null);
+  const slabRef = useRef<Group>(null);
+  const slabMeshRef = useRef<Mesh>(null);
   const theme = useMapTheme();
   const light = theme === "light";
 
@@ -89,13 +91,19 @@ export function HospitalFloor({ locations, patients, split, onSelectPatient }: H
   const slabY = (FLOOR_GAP - 0.06) / 2;
 
   useFrame((_, delta) => {
+    const speed = delta * 4;
     if (floor1Ref.current) {
-      floor1Ref.current.position.x = MathUtils.lerp(floor1Ref.current.position.x, split ? -13 : 0, delta * 4);
-      floor1Ref.current.position.y = MathUtils.lerp(floor1Ref.current.position.y, 0, delta * 4);
+      floor1Ref.current.position.x = MathUtils.lerp(floor1Ref.current.position.x, split ? -13 : 0, speed);
+      floor1Ref.current.position.y = MathUtils.lerp(floor1Ref.current.position.y, 0, speed);
     }
     if (floor2Ref.current) {
-      floor2Ref.current.position.x = MathUtils.lerp(floor2Ref.current.position.x, split ? 13 : 0, delta * 4);
-      floor2Ref.current.position.y = MathUtils.lerp(floor2Ref.current.position.y, split ? -FLOOR_GAP : 0, delta * 4);
+      floor2Ref.current.position.x = MathUtils.lerp(floor2Ref.current.position.x, split ? 13 : 0, speed);
+      floor2Ref.current.position.y = MathUtils.lerp(floor2Ref.current.position.y, split ? -FLOOR_GAP : 0, speed);
+    }
+    if (slabRef.current) {
+      const targetScale = split ? 0 : 1;
+      slabRef.current.scale.y = MathUtils.lerp(slabRef.current.scale.y, targetScale, speed);
+      slabRef.current.visible = slabRef.current.scale.y > 0.01;
     }
   });
 
@@ -114,20 +122,18 @@ export function HospitalFloor({ locations, patients, split, onSelectPatient }: H
         })}
       </group>
 
-      {!split && (
-        <>
-          <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, slabY, 0]} receiveShadow>
-            <planeGeometry args={[22, 18]} />
-            <meshStandardMaterial color={light ? "#d4d4d4" : "#141414"} roughness={0.9} />
+      <group ref={slabRef}>
+        <mesh ref={slabMeshRef} rotation={[-Math.PI / 2, 0, 0]} position={[0, slabY, 0]} receiveShadow>
+          <planeGeometry args={[22, 18]} />
+          <meshStandardMaterial color={light ? "#d4d4d4" : "#141414"} roughness={0.9} />
+        </mesh>
+        {([[-8, -6], [8, -6], [-8, 6], [8, 6]] as const).map(([x, z], i) => (
+          <mesh key={`pillar-${i}`} position={[x, slabY, z]}>
+            <boxGeometry args={[0.15, FLOOR_GAP - 0.1, 0.15]} />
+            <meshStandardMaterial color={light ? "#a3a3a3" : "#1a1a1a"} roughness={0.8} />
           </mesh>
-          {([[-8, -6], [8, -6], [-8, 6], [8, 6]] as const).map(([x, z], i) => (
-            <mesh key={`pillar-${i}`} position={[x, slabY, z]}>
-              <boxGeometry args={[0.15, FLOOR_GAP - 0.1, 0.15]} />
-              <meshStandardMaterial color={light ? "#a3a3a3" : "#1a1a1a"} roughness={0.8} />
-            </mesh>
-          ))}
-        </>
-      )}
+        ))}
+      </group>
 
       <group ref={floor2Ref}>
         <FloorBase y={FLOOR_GAP} />

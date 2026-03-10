@@ -34,7 +34,7 @@ export function BedPanel({ patient, onClose, light }: BedPanelProps) {
 
   return (
     <div
-      className={`absolute right-4 top-14 w-64 rounded-xl border p-4 shadow-2xl sm:right-6 sm:top-6 sm:w-72 sm:p-5 ${
+      className={`absolute left-4 bottom-14 z-20 w-64 rounded-xl border p-4 shadow-2xl sm:left-auto sm:right-6 sm:bottom-auto sm:top-16 sm:w-72 sm:p-5 ${
         light
           ? "border-neutral-300 bg-white"
           : "border-neutral-700 bg-neutral-900"
