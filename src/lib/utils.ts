@@ -28,40 +28,30 @@ export function formatPercent(value: number): string {
 }
 
 export function riskColor(score: number): string {
-  if (score > 0.75) return "bg-neutral-900 text-white shadow-sm";
-  if (score > 0.5) return "bg-neutral-700 text-white shadow-sm";
-  if (score > 0.25) return "bg-neutral-500 text-white shadow-sm";
+  if (score > 0.75) return "bg-red-600 text-white shadow-sm";
+  if (score > 0.5) return "bg-amber-500 text-white shadow-sm";
+  if (score > 0.25) return "bg-teal-500 text-white shadow-sm";
   return "bg-neutral-300 text-neutral-800 shadow-sm";
 }
 
 export function severityColor(severity: string): string {
   switch (severity.toLowerCase()) {
-    case "critical":
-      return "bg-neutral-900 text-white";
-    case "high":
-      return "bg-neutral-700 text-white";
-    case "medium":
-      return "bg-neutral-500 text-white";
-    case "low":
-      return "bg-neutral-300 text-neutral-800";
-    default:
-      return "bg-neutral-100 text-neutral-600";
+    case "critical": return "critical";
+    case "high": return "high";
+    case "medium": return "medium";
+    case "low": return "low";
+    default: return "default";
   }
 }
 
 export function statusColor(status: string): string {
   switch (status.toLowerCase()) {
     case "active":
-    case "critical":
-      return "bg-neutral-900 text-white";
-    case "suspected":
-      return "bg-neutral-700 text-white";
-    case "monitoring":
-      return "bg-neutral-500 text-white";
+    case "critical": return "critical";
+    case "suspected": return "high";
+    case "monitoring": return "monitoring";
     case "resolved":
-    case "stable":
-      return "bg-neutral-300 text-neutral-800";
-    default:
-      return "bg-neutral-100 text-neutral-600";
+    case "stable": return "resolved";
+    default: return "default";
   }
 }

@@ -169,7 +169,7 @@ function NavPanel({ light, activeWard, onSelectWard, onSelectFloor, onReset }: N
 
 export function HospitalScene({ locations, patients }: HospitalSceneProps) {
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
-  const [split, setSplit] = useState(false);
+  const [split, setSplit] = useState(true);
   const [theme, setTheme] = useState<"dark" | "light">("dark");
   const [cameraTarget, setCameraTarget] = useState<CameraTarget>(DEFAULT_CAMERA);
   const [activeWard, setActiveWard] = useState<string | null>(null);
@@ -185,7 +185,14 @@ export function HospitalScene({ locations, patients }: HospitalSceneProps) {
     if (!config) return;
     const isFloor2 = wardId in FLOOR2_LAYOUT;
     setActiveWard(wardId);
-    setCameraTarget(wardCamera(config.position, split, isFloor2));
+    if (!split) {
+      setSplit(true);
+      setTimeout(() => {
+        setCameraTarget(wardCamera(config.position, true, isFloor2));
+      }, 100);
+    } else {
+      setCameraTarget(wardCamera(config.position, split, isFloor2));
+    }
   }, [split]);
 
   const handleSelectFloor = useCallback((floor: number) => {

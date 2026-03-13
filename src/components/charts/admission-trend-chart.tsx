@@ -1,6 +1,6 @@
 import {
-  BarChart,
-  Bar,
+  AreaChart,
+  Area,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -14,8 +14,6 @@ interface AdmissionTrendChartProps {
   data: TrendPoint[];
   title?: string;
 }
-
-const GREY = { grid: "#e5e5e5", tick: "#737373", bar: "#404040", barHover: "#171717" };
 
 export function AdmissionTrendChart({
   data,
@@ -39,17 +37,23 @@ export function AdmissionTrendChart({
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={200}>
-          <BarChart data={chartData}>
-            <CartesianGrid strokeDasharray="3 3" stroke={GREY.grid} vertical={false} />
+          <AreaChart data={chartData}>
+            <defs>
+              <linearGradient id="admissionGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#0d9488" stopOpacity={0.15} />
+                <stop offset="95%" stopColor="#0d9488" stopOpacity={0} />
+              </linearGradient>
+            </defs>
+            <CartesianGrid strokeDasharray="3 3" stroke="#e5e5e5" vertical={false} />
             <XAxis
               dataKey="date"
-              tick={{ fontSize: 10, fill: GREY.tick }}
+              tick={{ fontSize: 10, fill: "#737373" }}
               tickFormatter={(v: string) => v.slice(5)}
               axisLine={false}
               tickLine={false}
             />
             <YAxis
-              tick={{ fontSize: 10, fill: GREY.tick }}
+              tick={{ fontSize: 10, fill: "#737373" }}
               axisLine={false}
               tickLine={false}
               width={30}
@@ -64,8 +68,15 @@ export function AdmissionTrendChart({
                 padding: "8px 12px",
               }}
             />
-            <Bar dataKey="admissions" fill={GREY.bar} radius={[4, 4, 0, 0]} barSize={20} />
-          </BarChart>
+            <Area
+              type="monotone"
+              dataKey="admissions"
+              stroke="#0d9488"
+              strokeWidth={2}
+              fill="url(#admissionGradient)"
+              dot={{ r: 3, fill: "#0d9488", strokeWidth: 0 }}
+            />
+          </AreaChart>
         </ResponsiveContainer>
       </CardContent>
     </Card>

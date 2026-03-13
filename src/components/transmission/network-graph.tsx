@@ -21,19 +21,19 @@ interface NetworkGraphProps {
 }
 
 const NODE_STYLES: Record<string, { bg: string; border: string; ring: string; text: string }> = {
-  Index: { bg: "#f5f5f5", border: "#404040", ring: "#171717", text: "#0a0a0a" },
-  Secondary: { bg: "#e5e5e5", border: "#525252", ring: "#404040", text: "#262626" },
-  Environmental: { bg: "#fafafa", border: "#737373", ring: "#525252", text: "#404040" },
-  HCW: { bg: "#f5f5f5", border: "#737373", ring: "#525252", text: "#404040" },
-  "Suspected Source": { bg: "#fafafa", border: "#a3a3a3", ring: "#737373", text: "#525252" },
+  Index: { bg: "#fef2f2", border: "#dc2626", ring: "#dc2626", text: "#991b1b" },
+  Secondary: { bg: "#fffbeb", border: "#d97706", ring: "#d97706", text: "#92400e" },
+  Environmental: { bg: "#f0fdfa", border: "#0d9488", ring: "#0d9488", text: "#134e4a" },
+  HCW: { bg: "#eff6ff", border: "#3b82f6", ring: "#3b82f6", text: "#1e40af" },
+  "Suspected Source": { bg: "#faf5ff", border: "#a855f7", ring: "#a855f7", text: "#6b21a8" },
 };
 
 const LINK_COLORS: Record<string, string> = {
-  "Direct Contact": "#171717",
-  "Shared Equipment": "#404040",
-  "Ward Proximity": "#525252",
-  "Temporal Link": "#737373",
-  "Environmental": "#a3a3a3",
+  "Direct Contact": "#dc2626",
+  "Shared Equipment": "#d97706",
+  "Ward Proximity": "#0d9488",
+  "Temporal Link": "#3b82f6",
+  "Environmental": "#16a34a",
 };
 
 function radialLayout(nodes: TransmissionNode[], links: TransmissionLink[]): Map<string, { x: number; y: number }> {

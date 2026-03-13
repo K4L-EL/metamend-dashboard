@@ -10,7 +10,6 @@ import {
   ClipboardCheck,
   FlaskConical,
   Network,
-  Unplug,
   Workflow,
   Search,
   ChevronRight,
@@ -52,7 +51,6 @@ const navSections: NavSection[] = [
       { to: "/app/surveillance", icon: Activity, label: "Infections", exact: false, badge: "10" },
       { to: "/app/patients", icon: Users, label: "Patients", exact: false },
       { to: "/app/screening", icon: ClipboardCheck, label: "Screening", exact: false },
-      { to: "/app/devices", icon: Unplug, label: "Devices", exact: false },
     ],
   },
   {
@@ -195,8 +193,8 @@ export function AppSidebar({ mobile }: AppSidebarProps) {
 
       {/* Quick links */}
       <div className="shrink-0 space-y-px px-2 py-2">
-        <SidebarQuickLink icon={Settings} label="Settings" collapsed={isCollapsed} />
-        <SidebarQuickLink icon={HelpCircle} label="Documentation" collapsed={isCollapsed} />
+        <SidebarQuickLink to="/app/settings" icon={Settings} label="Settings" collapsed={isCollapsed} currentPath={currentPath} onClick={handleNavClick} />
+        <SidebarQuickLink to="/app/account" icon={HelpCircle} label="Account" collapsed={isCollapsed} currentPath={currentPath} onClick={handleNavClick} />
       </div>
 
       <div className={cn("h-px shrink-0 bg-neutral-800", isCollapsed ? "mx-2" : "mx-4")} />
@@ -244,17 +242,23 @@ export function AppSidebar({ mobile }: AppSidebarProps) {
   );
 }
 
-function SidebarQuickLink({ icon: Icon, label, collapsed }: { icon: LucideIcon; label: string; collapsed: boolean }) {
+function SidebarQuickLink({ to, icon: Icon, label, collapsed, currentPath, onClick }: { to: string; icon: LucideIcon; label: string; collapsed: boolean; currentPath: string; onClick?: () => void }) {
+  const isActive = currentPath.startsWith(to);
   return (
-    <button
+    <Link
+      to={to}
       title={collapsed ? label : undefined}
+      onClick={onClick}
       className={cn(
-        "flex w-full items-center rounded-lg text-left text-[12px] font-medium text-neutral-500 transition-colors hover:bg-neutral-900 hover:text-neutral-300",
+        "flex w-full items-center rounded-lg text-left text-[12px] font-medium transition-colors",
         collapsed ? "justify-center px-0 py-[7px]" : "gap-2.5 px-3 py-[6px]",
+        isActive
+          ? "bg-neutral-800 text-white"
+          : "text-neutral-500 hover:bg-neutral-900 hover:text-neutral-300",
       )}
     >
       <Icon className={cn("shrink-0", collapsed ? "h-4 w-4" : "h-[14px] w-[14px]")} strokeWidth={1.8} />
       {!collapsed && label}
-    </button>
+    </Link>
   );
 }

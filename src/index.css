@@ -25,14 +25,18 @@
   --color-sidebar-text: #a3a3a3;
   --color-sidebar-text-active: #fafafa;
 
-  --color-danger: #525252;
-  --color-danger-light: #f5f5f5;
-  --color-warning: #525252;
-  --color-warning-light: #f5f5f5;
-  --color-success: #404040;
-  --color-success-light: #f5f5f5;
-  --color-info: #525252;
-  --color-info-light: #f5f5f5;
+  --color-metamed: #0d9488;
+  --color-metamed-light: #ccfbf1;
+  --color-metamed-subtle: #f0fdfa;
+
+  --color-danger: #dc2626;
+  --color-danger-light: #fef2f2;
+  --color-warning: #d97706;
+  --color-warning-light: #fffbeb;
+  --color-success: #16a34a;
+  --color-success-light: #f0fdf4;
+  --color-info: #0d9488;
+  --color-info-light: #f0fdfa;
 }
 
 *,

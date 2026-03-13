@@ -17,9 +17,9 @@ interface RiskDistributionChartProps {
 }
 
 function barShade(score: number): string {
-  if (score > 0.75) return "#171717";
-  if (score > 0.5) return "#404040";
-  if (score > 0.25) return "#737373";
+  if (score > 0.75) return "#dc2626";
+  if (score > 0.5) return "#d97706";
+  if (score > 0.25) return "#0d9488";
   return "#a3a3a3";
 }
 

@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { AppSidebar } from "./app-sidebar";
 import { SidebarProvider, useSidebar } from "./sidebar-context";
+import { AiChatPanel } from "../ai-chat/chat-panel";
 
 interface AppLayoutProps {
   children: ReactNode;
@@ -29,6 +30,8 @@ function LayoutInner({ children }: AppLayoutProps) {
       <main style={{ flex: 1, minWidth: 0, overflowX: "hidden", overflowY: "auto" }}>
         {children}
       </main>
+
+      <AiChatPanel />
     </div>
   );
 }

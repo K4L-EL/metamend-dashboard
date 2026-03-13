@@ -57,9 +57,9 @@ function SurveillancePage() {
       <Header title="Surveillance" subtitle="Real-time infection monitoring and tracking" />
       <div className="space-y-4 p-4 sm:space-y-6 sm:p-8">
         <div className="grid gap-4 sm:grid-cols-3">
-          <MetricCard label="Total Active" value={infections.data?.filter((i) => i.status === "Active").length ?? 0} accent="bg-neutral-900" />
-          <MetricCard label="HAI Cases" value={infections.data?.filter((i) => i.isHai).length ?? 0} accent="bg-neutral-600" />
-          <MetricCard label="Under Monitoring" value={infections.data?.filter((i) => i.status === "Monitoring").length ?? 0} accent="bg-neutral-400" />
+          <MetricCard label="Total Active" value={infections.data?.filter((i) => i.status === "Active").length ?? 0} accent="bg-red-500" />
+          <MetricCard label="HAI Cases" value={infections.data?.filter((i) => i.isHai).length ?? 0} accent="bg-amber-500" />
+          <MetricCard label="Under Monitoring" value={infections.data?.filter((i) => i.status === "Monitoring").length ?? 0} accent="bg-teal-500" />
         </div>
 
         <Card>
@@ -99,7 +99,7 @@ function SurveillancePage() {
                       <TableCell><Badge variant={severityColor(infection.severity)}>{infection.severity}</Badge></TableCell>
                       <TableCell><Badge variant={statusColor(infection.status)}>{infection.status}</Badge></TableCell>
                       <TableCell className="text-[12px] text-muted">{formatDateTime(infection.detectedAt)}</TableCell>
-                      <TableCell>{infection.isHai && <span className="inline-block h-2 w-2 rounded-full bg-danger" />}</TableCell>
+                      <TableCell>{infection.isHai && <span className="inline-block h-2 w-2 rounded-full bg-red-500" />}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

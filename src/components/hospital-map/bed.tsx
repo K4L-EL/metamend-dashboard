@@ -100,7 +100,7 @@ export function Bed({ position, patient, bedId, onSelect }: BedProps) {
         position={position}
         onPointerOver={(e) => { e.stopPropagation(); setHovered(true); document.body.style.cursor = patient ? "pointer" : "default"; }}
         onPointerOut={() => { setHovered(false); document.body.style.cursor = "default"; }}
-        onClick={(e) => { e.stopPropagation(); if (patient && onSelect) onSelect(patient); }}
+        onClick={(e) => { e.stopPropagation(); if (patient && onSelect) { setHovered(false); onSelect(patient); } }}
       >
         {/* Frame */}
         <RoundedBox args={[0.38, 0.06, 0.7]} radius={0.02} smoothness={4} position={[0, 0, 0]} castShadow receiveShadow>

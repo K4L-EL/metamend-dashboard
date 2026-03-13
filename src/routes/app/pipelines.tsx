@@ -17,7 +17,7 @@ import {
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import {
-  Workflow, Play, Pause, Plus, ArrowLeft, Clock, Zap, Database, GitBranch, FileOutput,
+  Workflow, Play, Pause, Plus, ArrowLeft, Clock, Zap, Database, GitBranch, FileOutput, Download,
 } from "lucide-react";
 import { Header } from "../../components/layout/header";
 import { Button } from "../../components/ui/button";
@@ -216,6 +216,22 @@ function PipelineEditor({ pipeline, onBack }: { pipeline: Pipeline; onBack: () =
                 <ArrowLeft className="h-3.5 w-3.5" /> Back
               </Button>
               <Badge variant={statusColor(pipeline.status)}>{pipeline.status}</Badge>
+              <Button
+                size="sm"
+                variant="secondary"
+                onClick={() => {
+                  const data = JSON.stringify({ nodes: pipeline.nodes, edges: pipeline.edges }, null, 2);
+                  const blob = new Blob([data], { type: "application/json" });
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement("a");
+                  a.href = url;
+                  a.download = `pipeline-${pipeline.name.replace(/\s/g, "-")}.json`;
+                  a.click();
+                  URL.revokeObjectURL(url);
+                }}
+              >
+                <Download className="h-3.5 w-3.5" /> Export
+              </Button>
             </div>
           </Panel>
 

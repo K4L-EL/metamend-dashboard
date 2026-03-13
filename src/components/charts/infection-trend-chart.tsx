@@ -16,13 +16,13 @@ interface InfectionTrendChartProps {
   title?: string;
 }
 
-const GREY = {
+const COLORS = {
   grid: "#e5e5e5",
   tick: "#737373",
-  dark: "#404040",
-  darkFill: "rgba(64, 64, 64, 0.08)",
-  light: "#737373",
-  lightFill: "rgba(115, 115, 115, 0.06)",
+  hai: "#dc2626",
+  haiFill: "rgba(220, 38, 38, 0.08)",
+  community: "#0d9488",
+  communityFill: "rgba(13, 148, 136, 0.06)",
 };
 
 export function InfectionTrendChart({
@@ -51,16 +51,16 @@ export function InfectionTrendChart({
       <CardContent>
         <ResponsiveContainer width="100%" height={260}>
           <AreaChart data={chartData}>
-            <CartesianGrid strokeDasharray="3 3" stroke={GREY.grid} vertical={false} />
+            <CartesianGrid strokeDasharray="3 3" stroke={COLORS.grid} vertical={false} />
             <XAxis
               dataKey="date"
-              tick={{ fontSize: 10, fill: GREY.tick }}
+              tick={{ fontSize: 10, fill: COLORS.tick }}
               tickFormatter={(v: string) => v.slice(5)}
               axisLine={false}
               tickLine={false}
             />
             <YAxis
-              tick={{ fontSize: 10, fill: GREY.tick }}
+              tick={{ fontSize: 10, fill: COLORS.tick }}
               axisLine={false}
               tickLine={false}
               width={30}
@@ -83,15 +83,15 @@ export function InfectionTrendChart({
             <Area
               type="monotone"
               dataKey="HAI"
-              stroke={GREY.dark}
-              fill={GREY.darkFill}
+              stroke={COLORS.hai}
+              fill={COLORS.haiFill}
               strokeWidth={1.5}
             />
             <Area
               type="monotone"
               dataKey="Community"
-              stroke={GREY.light}
-              fill={GREY.lightFill}
+              stroke={COLORS.community}
+              fill={COLORS.communityFill}
               strokeWidth={1.5}
             />
           </AreaChart>

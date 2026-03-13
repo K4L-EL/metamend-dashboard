@@ -16,11 +16,11 @@ interface ForecastChartProps {
   title?: string;
 }
 
-const GREY = {
+const COLORS = {
   grid: "#e5e5e5",
   tick: "#737373",
-  fill: "rgba(64, 64, 64, 0.06)",
-  predicted: "#171717",
+  fill: "rgba(13, 148, 136, 0.06)",
+  predicted: "#0d9488",
   actual: "#737373",
 };
 
@@ -37,16 +37,16 @@ export function ForecastChart({
       <CardContent>
         <ResponsiveContainer width="100%" height={260}>
           <ComposedChart data={data}>
-            <CartesianGrid strokeDasharray="3 3" stroke={GREY.grid} vertical={false} />
+            <CartesianGrid strokeDasharray="3 3" stroke={COLORS.grid} vertical={false} />
             <XAxis
               dataKey="date"
-              tick={{ fontSize: 10, fill: GREY.tick }}
+              tick={{ fontSize: 10, fill: COLORS.tick }}
               tickFormatter={(v: string) => v.slice(5)}
               axisLine={false}
               tickLine={false}
             />
             <YAxis
-              tick={{ fontSize: 10, fill: GREY.tick }}
+              tick={{ fontSize: 10, fill: COLORS.tick }}
               axisLine={false}
               tickLine={false}
               width={30}
@@ -65,7 +65,7 @@ export function ForecastChart({
               type="monotone"
               dataKey="upperBound"
               stroke="none"
-              fill={GREY.fill}
+              fill={COLORS.fill}
             />
             <Area
               type="monotone"
@@ -76,7 +76,7 @@ export function ForecastChart({
             <Line
               type="monotone"
               dataKey="predictedCount"
-              stroke={GREY.predicted}
+              stroke={COLORS.predicted}
               strokeWidth={2}
               dot={false}
               name="Predicted"
@@ -84,10 +84,10 @@ export function ForecastChart({
             <Line
               type="monotone"
               dataKey="actualCount"
-              stroke={GREY.actual}
+              stroke={COLORS.actual}
               strokeWidth={1.5}
               strokeDasharray="4 4"
-              dot={{ r: 2.5, fill: GREY.actual, strokeWidth: 0 }}
+              dot={{ r: 2.5, fill: COLORS.actual, strokeWidth: 0 }}
               name="Actual"
               connectNulls={false}
             />

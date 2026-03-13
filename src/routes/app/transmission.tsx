@@ -17,19 +17,19 @@ export const Route = createFileRoute("/app/transmission")({
 });
 
 const NODE_COLORS: Record<string, string> = {
-  Index: "bg-neutral-900",
-  Secondary: "bg-neutral-700",
-  Environmental: "bg-neutral-600",
-  HCW: "bg-neutral-500",
-  "Suspected Source": "bg-neutral-400",
+  Index: "bg-red-500",
+  Secondary: "bg-amber-500",
+  Environmental: "bg-teal-500",
+  HCW: "bg-blue-400",
+  "Suspected Source": "bg-purple-400",
 };
 
 const LINK_COLORS: Record<string, string> = {
-  "Direct Contact": "bg-neutral-900",
-  "Shared Equipment": "bg-neutral-700",
-  "Ward Proximity": "bg-neutral-600",
-  "Temporal Link": "bg-neutral-500",
-  "Environmental": "bg-neutral-400",
+  "Direct Contact": "bg-red-500",
+  "Shared Equipment": "bg-amber-500",
+  "Ward Proximity": "bg-teal-500",
+  "Temporal Link": "bg-blue-400",
+  "Environmental": "bg-green-400",
 };
 
 function TransmissionPage() {

@@ -14,6 +14,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app/index'
 import { Route as AppTransmissionRouteImport } from './routes/app/transmission'
 import { Route as AppSurveillanceRouteImport } from './routes/app/surveillance'
+import { Route as AppSettingsRouteImport } from './routes/app/settings'
 import { Route as AppScreeningRouteImport } from './routes/app/screening'
 import { Route as AppResistanceRouteImport } from './routes/app/resistance'
 import { Route as AppPipelinesRouteImport } from './routes/app/pipelines'
@@ -23,6 +24,7 @@ import { Route as AppHospitalMapRouteImport } from './routes/app/hospital-map'
 import { Route as AppForecastingRouteImport } from './routes/app/forecasting'
 import { Route as AppDevicesRouteImport } from './routes/app/devices'
 import { Route as AppAlertsRouteImport } from './routes/app/alerts'
+import { Route as AppAccountRouteImport } from './routes/app/account'
 
 const AppRouteRoute = AppRouteRouteImport.update({
   id: '/app',
@@ -47,6 +49,11 @@ const AppTransmissionRoute = AppTransmissionRouteImport.update({
 const AppSurveillanceRoute = AppSurveillanceRouteImport.update({
   id: '/surveillance',
   path: '/surveillance',
+  getParentRoute: () => AppRouteRoute,
+} as any)
+const AppSettingsRoute = AppSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
   getParentRoute: () => AppRouteRoute,
 } as any)
 const AppScreeningRoute = AppScreeningRouteImport.update({
@@ -94,10 +101,16 @@ const AppAlertsRoute = AppAlertsRouteImport.update({
   path: '/alerts',
   getParentRoute: () => AppRouteRoute,
 } as any)
+const AppAccountRoute = AppAccountRouteImport.update({
+  id: '/account',
+  path: '/account',
+  getParentRoute: () => AppRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRouteRouteWithChildren
+  '/app/account': typeof AppAccountRoute
   '/app/alerts': typeof AppAlertsRoute
   '/app/devices': typeof AppDevicesRoute
   '/app/forecasting': typeof AppForecastingRoute
@@ -107,12 +120,14 @@ export interface FileRoutesByFullPath {
   '/app/pipelines': typeof AppPipelinesRoute
   '/app/resistance': typeof AppResistanceRoute
   '/app/screening': typeof AppScreeningRoute
+  '/app/settings': typeof AppSettingsRoute
   '/app/surveillance': typeof AppSurveillanceRoute
   '/app/transmission': typeof AppTransmissionRoute
   '/app/': typeof AppIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/app/account': typeof AppAccountRoute
   '/app/alerts': typeof AppAlertsRoute
   '/app/devices': typeof AppDevicesRoute
   '/app/forecasting': typeof AppForecastingRoute
@@ -122,6 +137,7 @@ export interface FileRoutesByTo {
   '/app/pipelines': typeof AppPipelinesRoute
   '/app/resistance': typeof AppResistanceRoute
   '/app/screening': typeof AppScreeningRoute
+  '/app/settings': typeof AppSettingsRoute
   '/app/surveillance': typeof AppSurveillanceRoute
   '/app/transmission': typeof AppTransmissionRoute
   '/app': typeof AppIndexRoute
@@ -130,6 +146,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/app': typeof AppRouteRouteWithChildren
+  '/app/account': typeof AppAccountRoute
   '/app/alerts': typeof AppAlertsRoute
   '/app/devices': typeof AppDevicesRoute
   '/app/forecasting': typeof AppForecastingRoute
@@ -139,6 +156,7 @@ export interface FileRoutesById {
   '/app/pipelines': typeof AppPipelinesRoute
   '/app/resistance': typeof AppResistanceRoute
   '/app/screening': typeof AppScreeningRoute
+  '/app/settings': typeof AppSettingsRoute
   '/app/surveillance': typeof AppSurveillanceRoute
   '/app/transmission': typeof AppTransmissionRoute
   '/app/': typeof AppIndexRoute
@@ -148,6 +166,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/app'
+    | '/app/account'
     | '/app/alerts'
     | '/app/devices'
     | '/app/forecasting'
@@ -157,12 +176,14 @@ export interface FileRouteTypes {
     | '/app/pipelines'
     | '/app/resistance'
     | '/app/screening'
+    | '/app/settings'
     | '/app/surveillance'
     | '/app/transmission'
     | '/app/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/app/account'
     | '/app/alerts'
     | '/app/devices'
     | '/app/forecasting'
@@ -172,6 +193,7 @@ export interface FileRouteTypes {
     | '/app/pipelines'
     | '/app/resistance'
     | '/app/screening'
+    | '/app/settings'
     | '/app/surveillance'
     | '/app/transmission'
     | '/app'
@@ -179,6 +201,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/app'
+    | '/app/account'
     | '/app/alerts'
     | '/app/devices'
     | '/app/forecasting'
@@ -188,6 +211,7 @@ export interface FileRouteTypes {
     | '/app/pipelines'
     | '/app/resistance'
     | '/app/screening'
+    | '/app/settings'
     | '/app/surveillance'
     | '/app/transmission'
     | '/app/'
@@ -233,6 +257,13 @@ declare module '@tanstack/react-router' {
       path: '/surveillance'
       fullPath: '/app/surveillance'
       preLoaderRoute: typeof AppSurveillanceRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
+    '/app/settings': {
+      id: '/app/settings'
+      path: '/settings'
+      fullPath: '/app/settings'
+      preLoaderRoute: typeof AppSettingsRouteImport
       parentRoute: typeof AppRouteRoute
     }
     '/app/screening': {
@@ -298,10 +329,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAlertsRouteImport
       parentRoute: typeof AppRouteRoute
     }
+    '/app/account': {
+      id: '/app/account'
+      path: '/account'
+      fullPath: '/app/account'
+      preLoaderRoute: typeof AppAccountRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
   }
 }
 
 interface AppRouteRouteChildren {
+  AppAccountRoute: typeof AppAccountRoute
   AppAlertsRoute: typeof AppAlertsRoute
   AppDevicesRoute: typeof AppDevicesRoute
   AppForecastingRoute: typeof AppForecastingRoute
@@ -311,12 +350,14 @@ interface AppRouteRouteChildren {
   AppPipelinesRoute: typeof AppPipelinesRoute
   AppResistanceRoute: typeof AppResistanceRoute
   AppScreeningRoute: typeof AppScreeningRoute
+  AppSettingsRoute: typeof AppSettingsRoute
   AppSurveillanceRoute: typeof AppSurveillanceRoute
   AppTransmissionRoute: typeof AppTransmissionRoute
   AppIndexRoute: typeof AppIndexRoute
 }
 
 const AppRouteRouteChildren: AppRouteRouteChildren = {
+  AppAccountRoute: AppAccountRoute,
   AppAlertsRoute: AppAlertsRoute,
   AppDevicesRoute: AppDevicesRoute,
   AppForecastingRoute: AppForecastingRoute,
@@ -326,6 +367,7 @@ const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppPipelinesRoute: AppPipelinesRoute,
   AppResistanceRoute: AppResistanceRoute,
   AppScreeningRoute: AppScreeningRoute,
+  AppSettingsRoute: AppSettingsRoute,
   AppSurveillanceRoute: AppSurveillanceRoute,
   AppTransmissionRoute: AppTransmissionRoute,
   AppIndexRoute: AppIndexRoute,
