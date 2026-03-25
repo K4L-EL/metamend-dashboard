@@ -1,8 +1,8 @@
 import { useState, useMemo } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import {
   Bell, AlertTriangle, Shield, Activity, ClipboardCheck, Plus,
-  Archive, ChevronDown, ChevronUp, Filter, Check,
+  Archive, ChevronDown, ChevronUp, Filter, Check, MapPin,
 } from "lucide-react";
 import { Header } from "../../components/layout/header";
 import { Badge } from "../../components/ui/badge";
@@ -35,6 +35,7 @@ const EMPTY_FORM: CreateAlertRequest = {
 };
 
 function AlertsPage() {
+  const navigate = useNavigate();
   const alerts = useAsync(() => api.alerts.getAll(), []);
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState(EMPTY_FORM);
@@ -189,6 +190,7 @@ function AlertsPage() {
                 onSelect={() => toggleSelect(alert.id)}
                 onExpand={() => setExpandedId(expandedId === alert.id ? null : alert.id)}
                 showArchived={showArchived}
+                onViewMap={(location) => navigate({ to: "/app/hospital-map", search: { ward: location } })}
               />
             ))
           )}
@@ -232,6 +234,7 @@ function AlertRow({
   onSelect,
   onExpand,
   showArchived,
+  onViewMap,
 }: {
   alert: Alert;
   selected: boolean;
@@ -239,6 +242,7 @@ function AlertRow({
   onSelect: () => void;
   onExpand: () => void;
   showArchived: boolean;
+  onViewMap: (location: string) => void;
 }) {
   const cfg = CATEGORY_CONFIG[alert.category.toLowerCase()];
   const Icon = cfg?.icon ?? Bell;
@@ -292,6 +296,12 @@ function AlertRow({
                 {alert.relatedEntityId && ` (${alert.relatedEntityId})`}
               </p>
             )}
+            <button
+              onClick={() => onViewMap(alert.title.split(" in ").pop() ?? "ICU-A")}
+              className="mt-3 inline-flex items-center gap-1.5 rounded-lg border border-teal-200 bg-teal-50 px-3 py-1.5 text-[11px] font-medium text-teal-700 transition-colors hover:bg-teal-100"
+            >
+              <MapPin className="h-3 w-3" /> View on Location Risk Map
+            </button>
           </div>
         )}
       </CardContent>

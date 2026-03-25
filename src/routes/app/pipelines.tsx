@@ -220,7 +220,21 @@ function PipelineEditor({ pipeline, onBack }: { pipeline: Pipeline; onBack: () =
                 size="sm"
                 variant="secondary"
                 onClick={() => {
-                  const data = JSON.stringify({ nodes: pipeline.nodes, edges: pipeline.edges }, null, 2);
+                  const exportNodes = nodes.map((n) => ({
+                    id: n.id,
+                    type: (n.data as Record<string, unknown>)?.nodeKind ?? "unknown",
+                    label: (n.data as Record<string, unknown>)?.label ?? n.id,
+                    positionX: n.position.x,
+                    positionY: n.position.y,
+                    config: (n.data as Record<string, unknown>)?.config ?? {},
+                  }));
+                  const exportEdges = edges.map((e) => ({
+                    id: e.id,
+                    sourceId: e.source,
+                    targetId: e.target,
+                    label: e.label ?? null,
+                  }));
+                  const data = JSON.stringify({ name: pipeline.name, nodes: exportNodes, edges: exportEdges }, null, 2);
                   const blob = new Blob([data], { type: "application/json" });
                   const url = URL.createObjectURL(blob);
                   const a = document.createElement("a");

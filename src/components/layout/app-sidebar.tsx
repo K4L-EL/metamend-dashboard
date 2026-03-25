@@ -12,6 +12,7 @@ import {
   Network,
   Workflow,
   Search,
+  Microscope,
   ChevronRight,
   Settings,
   HelpCircle,
@@ -69,6 +70,12 @@ const navSections: NavSection[] = [
       { to: "/app/transmission", icon: Network, label: "Transmission", exact: false },
     ],
   },
+  {
+    title: "Learn",
+    items: [
+      { to: "/app/lab", icon: Microscope, label: "MetaMed Lab", exact: false },
+    ],
+  },
 ];
 
 interface AppSidebarProps {
@@ -105,9 +112,7 @@ export function AppSidebar({ mobile }: AppSidebarProps) {
       {/* Logo */}
       <div className={cn("flex h-[52px] shrink-0 items-center", isCollapsed ? "justify-center px-2" : "justify-between px-4")}>
         <div className="flex items-center gap-2">
-          <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-white text-[10px] font-bold tracking-wider text-neutral-900 shadow-md">
-            M
-          </div>
+          <img src="/logo.svg" alt="MetaMed" className="h-7 w-7 shrink-0 rounded-md shadow-md" />
           {!isCollapsed && (
             <div>
               <span className="text-[13px] font-semibold tracking-tight text-white">MetaMed</span>

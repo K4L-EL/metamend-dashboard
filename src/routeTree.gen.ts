@@ -20,6 +20,7 @@ import { Route as AppResistanceRouteImport } from './routes/app/resistance'
 import { Route as AppPipelinesRouteImport } from './routes/app/pipelines'
 import { Route as AppPatientsRouteImport } from './routes/app/patients'
 import { Route as AppOutbreaksRouteImport } from './routes/app/outbreaks'
+import { Route as AppLabRouteImport } from './routes/app/lab'
 import { Route as AppHospitalMapRouteImport } from './routes/app/hospital-map'
 import { Route as AppForecastingRouteImport } from './routes/app/forecasting'
 import { Route as AppDevicesRouteImport } from './routes/app/devices'
@@ -81,6 +82,11 @@ const AppOutbreaksRoute = AppOutbreaksRouteImport.update({
   path: '/outbreaks',
   getParentRoute: () => AppRouteRoute,
 } as any)
+const AppLabRoute = AppLabRouteImport.update({
+  id: '/lab',
+  path: '/lab',
+  getParentRoute: () => AppRouteRoute,
+} as any)
 const AppHospitalMapRoute = AppHospitalMapRouteImport.update({
   id: '/hospital-map',
   path: '/hospital-map',
@@ -115,6 +121,7 @@ export interface FileRoutesByFullPath {
   '/app/devices': typeof AppDevicesRoute
   '/app/forecasting': typeof AppForecastingRoute
   '/app/hospital-map': typeof AppHospitalMapRoute
+  '/app/lab': typeof AppLabRoute
   '/app/outbreaks': typeof AppOutbreaksRoute
   '/app/patients': typeof AppPatientsRoute
   '/app/pipelines': typeof AppPipelinesRoute
@@ -132,6 +139,7 @@ export interface FileRoutesByTo {
   '/app/devices': typeof AppDevicesRoute
   '/app/forecasting': typeof AppForecastingRoute
   '/app/hospital-map': typeof AppHospitalMapRoute
+  '/app/lab': typeof AppLabRoute
   '/app/outbreaks': typeof AppOutbreaksRoute
   '/app/patients': typeof AppPatientsRoute
   '/app/pipelines': typeof AppPipelinesRoute
@@ -151,6 +159,7 @@ export interface FileRoutesById {
   '/app/devices': typeof AppDevicesRoute
   '/app/forecasting': typeof AppForecastingRoute
   '/app/hospital-map': typeof AppHospitalMapRoute
+  '/app/lab': typeof AppLabRoute
   '/app/outbreaks': typeof AppOutbreaksRoute
   '/app/patients': typeof AppPatientsRoute
   '/app/pipelines': typeof AppPipelinesRoute
@@ -171,6 +180,7 @@ export interface FileRouteTypes {
     | '/app/devices'
     | '/app/forecasting'
     | '/app/hospital-map'
+    | '/app/lab'
     | '/app/outbreaks'
     | '/app/patients'
     | '/app/pipelines'
@@ -188,6 +198,7 @@ export interface FileRouteTypes {
     | '/app/devices'
     | '/app/forecasting'
     | '/app/hospital-map'
+    | '/app/lab'
     | '/app/outbreaks'
     | '/app/patients'
     | '/app/pipelines'
@@ -206,6 +217,7 @@ export interface FileRouteTypes {
     | '/app/devices'
     | '/app/forecasting'
     | '/app/hospital-map'
+    | '/app/lab'
     | '/app/outbreaks'
     | '/app/patients'
     | '/app/pipelines'
@@ -301,6 +313,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppOutbreaksRouteImport
       parentRoute: typeof AppRouteRoute
     }
+    '/app/lab': {
+      id: '/app/lab'
+      path: '/lab'
+      fullPath: '/app/lab'
+      preLoaderRoute: typeof AppLabRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
     '/app/hospital-map': {
       id: '/app/hospital-map'
       path: '/hospital-map'
@@ -345,6 +364,7 @@ interface AppRouteRouteChildren {
   AppDevicesRoute: typeof AppDevicesRoute
   AppForecastingRoute: typeof AppForecastingRoute
   AppHospitalMapRoute: typeof AppHospitalMapRoute
+  AppLabRoute: typeof AppLabRoute
   AppOutbreaksRoute: typeof AppOutbreaksRoute
   AppPatientsRoute: typeof AppPatientsRoute
   AppPipelinesRoute: typeof AppPipelinesRoute
@@ -362,6 +382,7 @@ const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppDevicesRoute: AppDevicesRoute,
   AppForecastingRoute: AppForecastingRoute,
   AppHospitalMapRoute: AppHospitalMapRoute,
+  AppLabRoute: AppLabRoute,
   AppOutbreaksRoute: AppOutbreaksRoute,
   AppPatientsRoute: AppPatientsRoute,
   AppPipelinesRoute: AppPipelinesRoute,
