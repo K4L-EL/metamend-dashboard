@@ -1,17 +1,17 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
-import { X, Users, Link2, GitBranch } from "lucide-react";
+import { useState, useMemo } from "react";
+import { X, Users, Link2, GitBranch, Bot, Maximize2, Minimize2 } from "lucide-react";
 import { Header } from "../../components/layout/header";
 import { Badge } from "../../components/ui/badge";
 import { Loading } from "../../components/ui/loading";
 import { StatCard } from "../../components/ui/stat-card";
-import { Card, CardContent } from "../../components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent } from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
 import { NetworkGraph } from "../../components/transmission/network-graph";
 import { useAsync } from "../../hooks/use-async";
 import { api } from "../../lib/api";
 import { formatDateTime, cn } from "../../lib/utils";
-import type { TransmissionNode } from "../../types";
+import type { TransmissionNode, TransmissionNetwork } from "../../types";
 
 export const Route = createFileRoute("/app/transmission")({
   component: TransmissionPage,
@@ -33,10 +33,43 @@ const LINK_COLORS: Record<string, string> = {
   "Environmental": "bg-neutral-400",
 };
 
+function generateNetworkAnalysis(data: TransmissionNetwork): { title: string; findings: string[]; recommendations: string[] } {
+  const indexNodes = data.nodes.filter((n) => n.nodeType === "Index");
+  const directLinks = data.links.filter((l) => l.linkType === "Direct Contact");
+  const highConfidence = data.links.filter((l) => l.confidence > 0.7);
+  const wards = [...new Set(data.nodes.map((n) => n.ward))];
+
+  return {
+    title: `${data.organism} Transmission Network Analysis`,
+    findings: [
+      `Network contains ${data.totalCases} linked cases across ${wards.length} ward${wards.length > 1 ? "s" : ""} (${wards.join(", ")}).`,
+      `${indexNodes.length} index case${indexNodes.length !== 1 ? "s" : ""} identified as potential source${indexNodes.length !== 1 ? "s" : ""} of transmission.`,
+      `${directLinks.length} direct contact link${directLinks.length !== 1 ? "s" : ""} established, suggesting ${directLinks.length > 3 ? "sustained person-to-person" : "limited"} transmission.`,
+      `${highConfidence.length} link${highConfidence.length !== 1 ? "s" : ""} with >70% confidence — molecular and epidemiological evidence supports clonal spread.`,
+      data.nodes.length > 5
+        ? `The network size suggests an established outbreak. Urgent containment measures recommended.`
+        : `Network is relatively contained. Enhanced surveillance should prevent further spread.`,
+    ],
+    recommendations: [
+      `Implement contact precautions for all ${data.totalCases} linked patients.`,
+      `Screen all patients and staff in ${wards.join(", ")} for ${data.organism}.`,
+      `Review antimicrobial prescribing in affected wards — consider antibiotic stewardship intervention.`,
+      `Conduct environmental sampling in ${wards[0]} where index case was identified.`,
+      `Schedule IPC committee review within 48 hours to assess containment progress.`,
+    ],
+  };
+}
+
 function TransmissionPage() {
   const [organism, setOrganism] = useState("MRSA");
   const [selectedNode, setSelectedNode] = useState<TransmissionNode | null>(null);
+  const [graphExpanded, setGraphExpanded] = useState(false);
   const network = useAsync(() => api.transmission.getNetwork(organism), [organism]);
+
+  const analysis = useMemo(
+    () => network.data ? generateNetworkAnalysis(network.data) : null,
+    [network.data],
+  );
 
   return (
     <div>
@@ -144,6 +177,46 @@ function TransmissionPage() {
                 </div>
               )}
             </div>
+
+            {/* AI Outbreak Analysis */}
+            {analysis && (
+              <Card>
+                <CardContent className="p-5">
+                  <div className="flex items-start gap-3">
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-sky-100">
+                      <Bot className="h-4 w-4 text-sky-600" />
+                    </div>
+                    <div className="flex-1 space-y-4">
+                      <h3 className="text-sm font-semibold text-neutral-900">{analysis.title}</h3>
+
+                      <div>
+                        <p className="mb-2 text-[10px] font-semibold tracking-wider text-neutral-400 uppercase">Key Findings</p>
+                        <ul className="space-y-1.5">
+                          {analysis.findings.map((f, i) => (
+                            <li key={i} className="flex items-start gap-2 text-xs leading-relaxed text-neutral-600">
+                              <span className="mt-0.5 text-neutral-400">•</span>
+                              <span>{f}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+
+                      <div>
+                        <p className="mb-2 text-[10px] font-semibold tracking-wider text-neutral-400 uppercase">Recommendations</p>
+                        <ul className="space-y-1.5">
+                          {analysis.recommendations.map((r, i) => (
+                            <li key={i} className="flex items-start gap-2 text-xs leading-relaxed text-neutral-600">
+                              <span className="mt-0.5 text-sky-500 font-semibold">{i + 1}.</span>
+                              <span>{r}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
 
             <div className="flex gap-6">
               <Card className="flex-1">

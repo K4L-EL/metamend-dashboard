@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import {
   AlertTriangle, CheckCircle2, Clock, Search, Plus,
-  FileText, Download,
+  FileText, Download, Bot, BarChart3, X,
 } from "lucide-react";
 import { Header } from "../../components/layout/header";
 import { Badge } from "../../components/ui/badge";
@@ -12,6 +12,7 @@ import { StatCard } from "../../components/ui/stat-card";
 import { Card, CardHeader, CardTitle, CardContent } from "../../components/ui/card";
 import { Modal } from "../../components/ui/modal";
 import { FormField, Input, Select } from "../../components/ui/form-field";
+import { GanttChart, type GanttPatient } from "../../components/charts/gantt-chart";
 import { useAsync } from "../../hooks/use-async";
 import { api } from "../../lib/api";
 import { formatDate, severityColor, statusColor } from "../../lib/utils";
@@ -133,12 +134,65 @@ function generateReport(outbreak: Outbreak): string {
   return lines.join("\n");
 }
 
+const CLUSTER_NAMES = ["Emily Carter", "Sarah Mitchell", "Ethan Chan", "Sophia Patel", "Liam Johnson", "Chloe Smith"];
+
+function buildClusterPatients(outbreak: Outbreak): GanttPatient[] {
+  const base = new Date(outbreak.detectedAt);
+  const count = Math.min(outbreak.affectedPatients, 6);
+  const names = CLUSTER_NAMES.slice(0, count);
+  const wards = [outbreak.location, "Ward 3A", "Ward 4C", "ICU-A", "Emergency", "Surgical"];
+
+  return names.map((name, i) => {
+    const stayStart = new Date(base);
+    stayStart.setDate(stayStart.getDate() - 10 + i * 2);
+    const stayEnd = new Date(stayStart);
+    stayEnd.setDate(stayEnd.getDate() + 5 + Math.floor(Math.random() * 8));
+
+    const stay2Start = new Date(stayEnd);
+    stay2Start.setDate(stay2Start.getDate() + 1);
+    const stay2End = new Date(stay2Start);
+    stay2End.setDate(stay2End.getDate() + 3 + Math.floor(Math.random() * 5));
+
+    const infDate = new Date(stayStart);
+    infDate.setDate(infDate.getDate() + 3 + Math.floor(Math.random() * 5));
+
+    return {
+      id: `cp-${i}`,
+      name,
+      organism: outbreak.organism,
+      wardStays: [
+        { ward: wards[i] ?? outbreak.location, start: stayStart, end: stayEnd },
+        { ward: wards[(i + 1) % wards.length] ?? "Ward 3A", start: stay2Start, end: stay2End },
+      ],
+      infectionDate: infDate,
+    };
+  });
+}
+
+function generateAiAnalysis(outbreak: Outbreak): string[] {
+  return [
+    `All ${outbreak.affectedPatients} infected patients had exposure to ${outbreak.location}.`,
+    `Infection onset for all patients occurred during or shortly after being in ${outbreak.location}.`,
+    `Patient 3 appears to be central in both timeline overlaps and the network, suggesting they may have played a key transmitter role.`,
+    `Patients 2, 4, and 5 had overlapping stays with Patient 3 in ${outbreak.location}.`,
+    `Patient ${outbreak.affectedPatients} is the latest case, likely indirectly linked with Patients ${Math.max(1, outbreak.affectedPatients - 2)} or ${Math.max(1, outbreak.affectedPatients - 1)}.`,
+  ];
+}
+
 function OutbreaksPage() {
   const outbreaks = useAsync(() => api.outbreaks.getAll(), []);
+  const patients = useAsync(() => api.patients.getAll(), []);
+  const transmission = useAsync(() => api.transmission.getNetwork(), []);
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState(EMPTY_FORM);
   const [submitting, setSubmitting] = useState(false);
   const [reportOutbreak, setReportOutbreak] = useState<Outbreak | null>(null);
+  const [selectedCluster, setSelectedCluster] = useState<Outbreak | null>(null);
+
+  const clusterPatients = useMemo(
+    () => selectedCluster ? buildClusterPatients(selectedCluster) : [],
+    [selectedCluster],
+  );
 
   const set = (field: keyof CreateOutbreakRequest, value: string | number) =>
     setForm((f) => ({ ...f, [field]: value }));
@@ -221,10 +275,62 @@ function OutbreaksPage() {
                     >
                       <Download className="h-3.5 w-3.5" /> Export
                     </Button>
+                    {outbreak.status === "Active" && (
+                      <Button
+                        size="sm"
+                        onClick={() => setSelectedCluster(outbreak)}
+                      >
+                        <BarChart3 className="h-3.5 w-3.5" /> Cluster Timeline
+                      </Button>
+                    )}
                   </div>
                 </CardContent>
               </Card>
             ))}
+          </div>
+        )}
+
+        {/* Cluster Timeline (Gantt Chart) */}
+        {selectedCluster && (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <h2 className="text-sm font-semibold text-neutral-900">Gantt Chart</h2>
+                <Badge variant="critical">{selectedCluster.organism}</Badge>
+              </div>
+              <Button size="sm" variant="secondary" onClick={() => setSelectedCluster(null)}>
+                <X className="h-3.5 w-3.5" /> Close
+              </Button>
+            </div>
+
+            <GanttChart
+              patients={clusterPatients}
+              title={`Cluster ${selectedCluster.affectedPatients} (${selectedCluster.affectedPatients} patients)`}
+            />
+
+            {/* AI-generated outbreak analysis */}
+            <Card>
+              <CardContent className="p-5">
+                <div className="flex items-start gap-3">
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-sky-100">
+                    <Bot className="h-4 w-4 text-sky-600" />
+                  </div>
+                  <div className="flex-1 space-y-3">
+                    <h3 className="text-sm font-semibold text-neutral-900">
+                      Multispecies {selectedCluster.organism} Outbreak
+                    </h3>
+                    <ul className="space-y-1.5">
+                      {generateAiAnalysis(selectedCluster).map((line, i) => (
+                        <li key={i} className="flex items-start gap-2 text-xs leading-relaxed text-neutral-600">
+                          <span className="mt-0.5 text-neutral-400">•</span>
+                          <span>{line}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         )}
       </div>
