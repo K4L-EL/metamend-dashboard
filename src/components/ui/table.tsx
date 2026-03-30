@@ -7,7 +7,7 @@ export function Table({
 }: HTMLAttributes<HTMLTableElement>) {
   return (
     <div className="w-full overflow-x-auto overflow-y-visible">
-      <table className={cn("w-full text-[13px]", className)} {...props} />
+      <table className={cn("w-full text-sm", className)} {...props} />
     </div>
   );
 }
@@ -53,7 +53,7 @@ export function TableHead({
   return (
     <th
       className={cn(
-        "h-10 px-3 text-left align-middle text-[11px] font-medium tracking-wider text-muted-light uppercase sm:px-4",
+        "h-10 px-3 text-left align-middle text-xs font-medium tracking-wider text-muted-light uppercase sm:px-4",
         className,
       )}
       {...props}
@@ -67,7 +67,7 @@ export function TableCell({
 }: TdHTMLAttributes<HTMLTableCellElement>) {
   return (
     <td
-      className={cn("px-3 py-3 align-middle text-[13px] text-secondary sm:px-4 sm:py-3.5", className)}
+      className={cn("px-3 py-3 align-middle text-sm text-secondary sm:px-4 sm:py-3.5", className)}
       {...props}
     />
   );

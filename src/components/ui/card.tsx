@@ -37,7 +37,7 @@ export function CardTitle({
 }: HTMLAttributes<HTMLHeadingElement>) {
   return (
     <h3
-      className={cn("text-[13px] font-semibold tracking-[-0.01em] text-neutral-900", className)}
+      className={cn("text-sm font-semibold tracking-[-0.01em] text-neutral-900", className)}
       {...props}
     >
       {children}

@@ -43,7 +43,7 @@ function RiskIndicator({ score }: { score: number }) {
       <div className="h-1 w-14 overflow-hidden rounded-full bg-neutral-200">
         <div className={cn("h-full rounded-full transition-all", color)} style={{ width: `${pct}%` }} />
       </div>
-      <span className="text-[11px] font-medium tabular-nums text-neutral-500">{pct.toFixed(0)}%</span>
+      <span className="text-xs font-medium tabular-nums text-neutral-500">{pct.toFixed(0)}%</span>
     </div>
   );
 }
@@ -123,12 +123,12 @@ function PatientsPage() {
       <Header title="Patients" subtitle="Patient infection status and risk profiles" />
       <div className="flex h-[calc(100vh-56px)]">
         {/* Patient list */}
-        <div className={cn("flex-1 overflow-y-auto p-4 sm:p-8 transition-all", selectedPatient && "max-w-[55%]")}>
+        <div className={cn("flex-1 overflow-y-auto p-4 sm:p-6 transition-all", selectedPatient && "max-w-[55%]")}>
           <Card>
             <CardHeader>
               <CardTitle>All Patients</CardTitle>
               <div className="flex items-center gap-3">
-                <span className="text-[11px] text-neutral-400">{patients.data?.length ?? 0} patients</span>
+                <span className="text-xs text-neutral-400">{patients.data?.length ?? 0} patients</span>
                 <Button size="sm" onClick={() => setOpen(true)}>
                   <Plus className="h-3.5 w-3.5" /> Add Patient
                 </Button>
@@ -162,14 +162,14 @@ function PatientsPage() {
                       >
                         <TableCell className="font-medium text-neutral-900">{patient.name}</TableCell>
                         <TableCell>{patient.ward}</TableCell>
-                        <TableCell className="font-mono text-[11px] text-neutral-500">{patient.bedNumber}</TableCell>
+                        <TableCell className="font-mono text-xs text-neutral-500">{patient.bedNumber}</TableCell>
                         <TableCell><Badge variant={statusColor(patient.status)}>{patient.status}</Badge></TableCell>
                         <TableCell><RiskIndicator score={patient.riskScore} /></TableCell>
                         <TableCell className="text-center">
                           {patient.activeInfections > 0 ? (
-                            <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-md bg-red-500 px-1.5 text-[11px] font-semibold text-white">{patient.activeInfections}</span>
+                            <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-md bg-red-500 px-1.5 text-xs font-semibold text-white">{patient.activeInfections}</span>
                           ) : (
-                            <span className="text-[12px] text-neutral-400">--</span>
+                            <span className="text-xs text-neutral-400">--</span>
                           )}
                         </TableCell>
                         <TableCell>
@@ -190,7 +190,7 @@ function PatientsPage() {
             <div className="sticky top-0 z-10 flex items-center justify-between border-b border-neutral-200 bg-white px-5 py-3">
               <div>
                 <h2 className="text-[15px] font-semibold text-neutral-900">{selectedPatient.name}</h2>
-                <p className="text-[12px] text-neutral-500">
+                <p className="text-xs text-neutral-500">
                   {selectedPatient.age}y · {selectedPatient.gender} · {selectedPatient.ward} / {selectedPatient.bedNumber}
                 </p>
               </div>
@@ -206,7 +206,7 @@ function PatientsPage() {
                   key={id}
                   onClick={() => setActiveTab(id)}
                   className={cn(
-                    "flex items-center gap-1.5 px-4 py-2.5 text-[12px] font-medium transition-colors",
+                    "flex items-center gap-1.5 px-4 py-2.5 text-xs font-medium transition-colors",
                     activeTab === id
                       ? "border-b-2 border-sky-500 text-sky-700"
                       : "text-neutral-500 hover:text-neutral-700",
@@ -222,14 +222,14 @@ function PatientsPage() {
               {activeTab === "overview" && (
                 <>
                   <DetailSection title="Admission Snapshot">
-                    <p className="text-[13px] text-neutral-700">
+                    <p className="text-sm text-neutral-700">
                       {MOCK_COMPLAINTS[Math.abs(selectedPatient.name.charCodeAt(0)) % MOCK_COMPLAINTS.length]}
                     </p>
                   </DetailSection>
                   <DetailSection title="Location">
                     <button
                       onClick={() => navigate({ to: "/app/hospital-map", search: { ward: selectedPatient.ward } })}
-                      className="flex items-center gap-2 text-[13px] text-sky-700 hover:underline"
+                      className="flex items-center gap-2 text-sm text-sky-700 hover:underline"
                     >
                       <MapPin className="h-3.5 w-3.5" />
                       {selectedPatient.ward} — Bed {selectedPatient.bedNumber}
@@ -250,7 +250,7 @@ function PatientsPage() {
                     <div className="flex flex-wrap gap-1.5">
                       {selectedPatient.organisms.length > 0
                         ? selectedPatient.organisms.map((o) => <Badge key={o} variant="critical">{o}</Badge>)
-                        : <span className="text-[12px] text-neutral-400">None detected</span>
+                        : <span className="text-xs text-neutral-400">None detected</span>
                       }
                     </div>
                   </DetailSection>
@@ -265,10 +265,10 @@ function PatientsPage() {
                       <CardContent className="p-4 space-y-2">
                         <div className="flex items-center gap-2">
                           <Badge variant={inf.severity === "Critical" ? "critical" : inf.severity === "High" ? "high" : "medium"}>{inf.severity}</Badge>
-                          <span className="font-mono text-[12px] text-neutral-700">{inf.organism}</span>
+                          <span className="font-mono text-xs text-neutral-700">{inf.organism}</span>
                           {inf.isHai && <Badge variant="critical">HAI</Badge>}
                         </div>
-                        <div className="grid grid-cols-2 gap-2 text-[12px]">
+                        <div className="grid grid-cols-2 gap-2 text-xs">
                           <div><span className="text-neutral-400">Type:</span> <span className="text-neutral-700">{inf.type}</span></div>
                           <div><span className="text-neutral-400">Ward:</span> <span className="text-neutral-700">{inf.ward}</span></div>
                           <div><span className="text-neutral-400">Source:</span> <span className="text-neutral-700">{inf.location || "Unknown"}</span></div>
@@ -286,8 +286,8 @@ function PatientsPage() {
                   : patientScreenings.map((s) => (
                     <div key={s.id} className="flex items-center justify-between rounded-lg border border-neutral-200 p-3">
                       <div>
-                        <p className="text-[13px] font-medium text-neutral-900">{s.screeningType}</p>
-                        <p className="text-[11px] text-neutral-500">Due: {formatDate(s.dueDate)}</p>
+                        <p className="text-sm font-medium text-neutral-900">{s.screeningType}</p>
+                        <p className="text-xs text-neutral-500">Due: {formatDate(s.dueDate)}</p>
                       </div>
                       <Badge variant={s.status === "Completed" ? "success" : s.status === "Overdue" ? "critical" : "default"}>{s.status}</Badge>
                     </div>
@@ -299,10 +299,10 @@ function PatientsPage() {
                   <div key={i} className="flex items-center justify-between rounded-lg border border-neutral-200 p-3">
                     <div>
                       <div className="flex items-center gap-2">
-                        <p className="text-[13px] font-medium text-neutral-900">{med.name}</p>
+                        <p className="text-sm font-medium text-neutral-900">{med.name}</p>
                         {med.type === "Antibiotic" && <Badge variant="high">Antibiotic</Badge>}
                       </div>
-                      <p className="text-[11px] text-neutral-500">{med.dose} · Day {med.days}</p>
+                      <p className="text-xs text-neutral-500">{med.dose} · Day {med.days}</p>
                     </div>
                     <Badge variant={med.type === "Antibiotic" ? "monitoring" : "default"}>{med.type}</Badge>
                   </div>
@@ -313,8 +313,8 @@ function PatientsPage() {
                 MOCK_DEVICES.map((d, i) => (
                   <div key={i} className="flex items-center justify-between rounded-lg border border-neutral-200 p-3">
                     <div>
-                      <p className="text-[13px] font-medium text-neutral-900">{d.type}</p>
-                      <p className="text-[11px] text-neutral-500">{d.site} · Inserted {formatDate(d.inserted)}</p>
+                      <p className="text-sm font-medium text-neutral-900">{d.type}</p>
+                      <p className="text-xs text-neutral-500">{d.site} · Inserted {formatDate(d.inserted)}</p>
                     </div>
                     <Badge variant={d.status === "Active" ? "info" : "default"}>{d.status}</Badge>
                   </div>
@@ -379,7 +379,7 @@ function DetailSection({ title, children }: { title: string; children: React.Rea
 function EmptyTab({ message }: { message: string }) {
   return (
     <div className="py-8 text-center">
-      <p className="text-[13px] text-neutral-400">{message}</p>
+      <p className="text-sm text-neutral-400">{message}</p>
     </div>
   );
 }

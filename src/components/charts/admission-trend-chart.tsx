@@ -33,7 +33,7 @@ export function AdmissionTrendChart({
     <Card className="border-neutral-200 shadow-sm">
       <CardHeader>
         <CardTitle>{title}</CardTitle>
-        <span className="text-[11px] text-neutral-500">Last 14 days</span>
+        <span className="text-xs text-neutral-500">Last 14 days</span>
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={200}>

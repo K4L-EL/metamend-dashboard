@@ -1,8 +1,8 @@
 import { useState, useMemo } from "react";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import {
   Bell, AlertTriangle, Shield, Activity, ClipboardCheck, Plus,
-  Archive, ChevronDown, ChevronUp, Filter, Check, MapPin,
+  Archive, Filter, Check,
 } from "lucide-react";
 import { Header } from "../../components/layout/header";
 import { Badge } from "../../components/ui/badge";
@@ -35,16 +35,13 @@ const EMPTY_FORM: CreateAlertRequest = {
 };
 
 function AlertsPage() {
-  const navigate = useNavigate();
   const alerts = useAsync(() => api.alerts.getAll(), []);
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState(EMPTY_FORM);
   const [submitting, setSubmitting] = useState(false);
-  const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [activeSeverity, setActiveSeverity] = useState<string | null>(null);
   const [archivedIds, setArchivedIds] = useState<Set<string>>(new Set());
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
-  const [expandedId, setExpandedId] = useState<string | null>(null);
   const [showArchived, setShowArchived] = useState(false);
 
   const set = (field: keyof CreateAlertRequest, value: string) =>
@@ -66,10 +63,9 @@ function AlertsPage() {
     items = items.filter((a) =>
       showArchived ? archivedIds.has(a.id) : !archivedIds.has(a.id)
     );
-    if (activeCategory) items = items.filter((a) => a.category.toLowerCase() === activeCategory);
     if (activeSeverity) items = items.filter((a) => a.severity.toLowerCase() === activeSeverity.toLowerCase());
     return items;
-  }, [alerts.data, activeCategory, activeSeverity, archivedIds, showArchived]);
+  }, [alerts.data, activeSeverity, archivedIds, showArchived]);
 
   function archiveSelected() {
     setArchivedIds((prev) => {
@@ -104,33 +100,26 @@ function AlertsPage() {
   return (
     <div>
       <Header title="Alerts" subtitle="System notifications and warnings" />
-      <div className="space-y-4 p-4 sm:space-y-6 sm:p-8">
-        {/* Category tiles */}
+      <div className="space-y-6 p-4 sm:p-6">
+        {/* Summary stats (static, non-interactive) */}
         <div className="grid gap-3 sm:grid-cols-4">
           {CATEGORIES.map((cat) => {
             const key = cat.toLowerCase();
             const cfg = CATEGORY_CONFIG[key]!;
             const Icon = cfg.icon;
-            const isActive = activeCategory === key;
             return (
-              <button
+              <div
                 key={cat}
-                onClick={() => setActiveCategory(isActive ? null : key)}
-                className={cn(
-                  "flex items-center gap-3 rounded-xl border p-4 text-left transition-all",
-                  isActive
-                    ? "border-sky-300 bg-sky-50 shadow-sm"
-                    : "border-neutral-200 bg-white hover:border-neutral-300 hover:shadow-sm",
-                )}
+                className="flex items-center gap-3 rounded-xl border border-neutral-200 bg-white p-4"
               >
                 <div className={cn("rounded-lg p-2", cfg.bg)}>
                   <Icon className={cn("h-4 w-4", cfg.color)} strokeWidth={1.8} />
                 </div>
                 <div>
-                  <p className="text-[22px] font-semibold text-neutral-900">{categoryCounts[key] ?? 0}</p>
-                  <p className="text-[11px] font-medium text-neutral-500">{cat}</p>
+                  <p className="text-xl font-semibold text-neutral-900">{categoryCounts[key] ?? 0}</p>
+                  <p className="text-xs font-medium text-neutral-500">{cat}</p>
                 </div>
-              </button>
+              </div>
             );
           })}
         </div>
@@ -142,7 +131,7 @@ function AlertsPage() {
             <select
               value={activeSeverity ?? ""}
               onChange={(e) => setActiveSeverity(e.target.value || null)}
-              className="rounded-lg border border-neutral-200 bg-white px-2.5 py-1.5 text-[12px] text-neutral-700 outline-none"
+              className="rounded-lg border border-neutral-200 bg-white px-2.5 py-1.5 text-xs text-neutral-700 outline-none"
             >
               <option value="">All severities</option>
               {SEVERITIES.map((s) => <option key={s} value={s}>{s}</option>)}
@@ -151,7 +140,7 @@ function AlertsPage() {
           <button
             onClick={() => setShowArchived(!showArchived)}
             className={cn(
-              "flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-[12px] transition-colors",
+              "flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs transition-colors",
               showArchived
                 ? "border-sky-300 bg-sky-50 text-sky-700"
                 : "border-neutral-200 bg-white text-neutral-600 hover:border-neutral-300",
@@ -178,7 +167,7 @@ function AlertsPage() {
           ) : filtered.length === 0 ? (
             <div className="rounded-xl border border-dashed border-neutral-200 py-12 text-center">
               <Bell className="mx-auto h-8 w-8 text-neutral-300" />
-              <p className="mt-2 text-[13px] text-neutral-500">No alerts found</p>
+              <p className="mt-2 text-sm text-neutral-500">No alerts found</p>
             </div>
           ) : (
             filtered.map((alert) => (
@@ -186,11 +175,8 @@ function AlertsPage() {
                 key={alert.id}
                 alert={alert}
                 selected={selectedIds.has(alert.id)}
-                expanded={expandedId === alert.id}
                 onSelect={() => toggleSelect(alert.id)}
-                onExpand={() => setExpandedId(expandedId === alert.id ? null : alert.id)}
                 showArchived={showArchived}
-                onViewMap={(location) => navigate({ to: "/app/hospital-map", search: { ward: location } })}
               />
             ))
           )}
@@ -230,19 +216,13 @@ function AlertsPage() {
 function AlertRow({
   alert,
   selected,
-  expanded,
   onSelect,
-  onExpand,
   showArchived,
-  onViewMap,
 }: {
   alert: Alert;
   selected: boolean;
-  expanded: boolean;
   onSelect: () => void;
-  onExpand: () => void;
   showArchived: boolean;
-  onViewMap: (location: string) => void;
 }) {
   const cfg = CATEGORY_CONFIG[alert.category.toLowerCase()];
   const Icon = cfg?.icon ?? Bell;
@@ -267,53 +247,18 @@ function AlertRow({
           <div className={cn("mt-0.5 rounded-lg p-2", cfg?.bg ?? "bg-neutral-100")}>
             <Icon className={cn("h-4 w-4", cfg?.color ?? "text-neutral-600")} strokeWidth={1.8} />
           </div>
-          <div className="min-w-0 flex-1 cursor-pointer" onClick={onExpand}>
+          <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
-              <h3 className="text-[13px] font-medium text-neutral-900">{alert.title}</h3>
+              <h3 className="text-sm font-medium text-neutral-900">{alert.title}</h3>
               <Badge variant={severityColor(alert.severity)}>{alert.severity}</Badge>
+              <Badge variant="info" className="text-[10px]">{alert.category}</Badge>
               {!alert.isRead && !showArchived && <span className="h-1.5 w-1.5 rounded-full bg-sky-500" />}
             </div>
-            <p className="mt-1 text-[12px] leading-relaxed text-neutral-500">{alert.description}</p>
-            <div className="mt-2 flex items-center gap-3">
-              <span className="text-[11px] text-neutral-400">{formatDateTime(alert.createdAt)}</span>
-              <Badge variant="info" className="text-[10px]">{alert.category}</Badge>
-            </div>
+            <p className="mt-1 text-xs leading-relaxed text-neutral-500">{alert.description}</p>
+            <p className="mt-1.5 text-[10px] text-neutral-400">{formatDateTime(alert.createdAt)}</p>
           </div>
-          <button onClick={onExpand} className="mt-1 text-neutral-400 hover:text-neutral-600">
-            {expanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-          </button>
         </div>
-        {expanded && (
-          <div className="border-t border-neutral-100 bg-neutral-50/50 px-4 py-3">
-            <div className="grid gap-3 sm:grid-cols-3">
-              <Detail label="Category" value={alert.category} />
-              <Detail label="Severity" value={alert.severity} />
-              <Detail label="Time" value={formatDateTime(alert.createdAt)} />
-            </div>
-            {alert.relatedEntityType && (
-              <p className="mt-3 text-[12px] text-neutral-500">
-                Related: <span className="font-medium text-sky-700">{alert.relatedEntityType}</span>
-                {alert.relatedEntityId && ` (${alert.relatedEntityId})`}
-              </p>
-            )}
-            <button
-              onClick={() => onViewMap(alert.title.split(" in ").pop() ?? "ICU-A")}
-              className="mt-3 inline-flex items-center gap-1.5 rounded-lg border border-sky-200 bg-sky-50 px-3 py-1.5 text-[11px] font-medium text-sky-700 transition-colors hover:bg-sky-100"
-            >
-              <MapPin className="h-3 w-3" /> View on Location Risk Map
-            </button>
-          </div>
-        )}
       </CardContent>
     </Card>
-  );
-}
-
-function Detail({ label, value }: { label: string; value: string }) {
-  return (
-    <div>
-      <p className="text-[10px] font-medium tracking-wider text-neutral-400 uppercase">{label}</p>
-      <p className="mt-0.5 text-[13px] text-neutral-700">{value}</p>
-    </div>
   );
 }

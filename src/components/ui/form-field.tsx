@@ -2,7 +2,7 @@ import { type InputHTMLAttributes, type SelectHTMLAttributes, type TextareaHTMLA
 import { cn } from "../../lib/utils";
 
 const fieldBase =
-  "w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-[13px] text-neutral-900 placeholder:text-neutral-400 transition-colors focus:border-neutral-500 focus:outline-none focus:ring-2 focus:ring-neutral-200 disabled:opacity-50";
+  "w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder:text-neutral-400 transition-colors focus:border-neutral-500 focus:outline-none focus:ring-2 focus:ring-neutral-200 disabled:opacity-50";
 
 interface LabelProps {
   label: string;
@@ -14,7 +14,7 @@ interface LabelProps {
 export function FormField({ label, required, className, children }: LabelProps) {
   return (
     <label className={cn("block", className)}>
-      <span className="mb-1.5 block text-[12px] font-medium text-secondary">
+      <span className="mb-1.5 block text-xs font-medium text-secondary">
         {label}
         {required && <span className="ml-0.5 text-neutral-600">*</span>}
       </span>

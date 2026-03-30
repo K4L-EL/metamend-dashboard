@@ -70,7 +70,7 @@ function PipelinesPage() {
   return (
     <div>
       <Header title="Data Pipelines" subtitle="Visual data flow editor for infection intelligence" />
-      <div className="space-y-4 p-4 sm:space-y-6 sm:p-8">
+      <div className="space-y-6 p-4 sm:p-6">
         {/* Stats */}
         <div className="grid gap-4 sm:grid-cols-3">
           <StatCard
@@ -111,8 +111,8 @@ function PipelinesPage() {
                         <Workflow className="h-4 w-4 text-accent" strokeWidth={1.8} />
                       </div>
                       <div>
-                        <h3 className="text-[13px] font-semibold text-primary">{pl.name}</h3>
-                        <p className="text-[11px] text-muted">{pl.description}</p>
+                        <h3 className="text-sm font-semibold text-primary">{pl.name}</h3>
+                        <p className="text-xs text-muted">{pl.description}</p>
                       </div>
                     </div>
                     <Badge variant={statusColor(pl.status)}>{pl.status}</Badge>
@@ -252,22 +252,22 @@ function PipelineEditor({ pipeline, onBack }: { pipeline: Pipeline; onBack: () =
           {/* Top-right node palette */}
           <Panel position="top-right">
             <div className="flex items-center gap-1.5 rounded-xl border border-border bg-white p-1.5 shadow-lg">
-              <span className="px-2 text-[11px] font-medium text-muted">Add:</span>
+              <span className="px-2 text-xs font-medium text-muted">Add:</span>
               <button
                 onClick={() => addNode("source")}
-                className="flex items-center gap-1.5 rounded-lg bg-neutral-100 px-3 py-1.5 text-[11px] font-medium text-neutral-700 transition-colors hover:bg-neutral-200"
+                className="flex items-center gap-1.5 rounded-lg bg-neutral-100 px-3 py-1.5 text-xs font-medium text-neutral-700 transition-colors hover:bg-neutral-200"
               >
                 <Database className="h-3 w-3" strokeWidth={2} /> Source
               </button>
               <button
                 onClick={() => addNode("transform")}
-                className="flex items-center gap-1.5 rounded-lg bg-neutral-100 px-3 py-1.5 text-[11px] font-medium text-neutral-700 transition-colors hover:bg-neutral-200"
+                className="flex items-center gap-1.5 rounded-lg bg-neutral-100 px-3 py-1.5 text-xs font-medium text-neutral-700 transition-colors hover:bg-neutral-200"
               >
                 <GitBranch className="h-3 w-3" strokeWidth={2} /> Transform
               </button>
               <button
                 onClick={() => addNode("output")}
-                className="flex items-center gap-1.5 rounded-lg bg-neutral-100 px-3 py-1.5 text-[11px] font-medium text-neutral-700 transition-colors hover:bg-neutral-200"
+                className="flex items-center gap-1.5 rounded-lg bg-neutral-100 px-3 py-1.5 text-xs font-medium text-neutral-700 transition-colors hover:bg-neutral-200"
               >
                 <FileOutput className="h-3 w-3" strokeWidth={2} /> Output
               </button>
@@ -283,7 +283,7 @@ function NodeCount({ icon: Icon, count, label }: { icon: typeof Database; count:
   return (
     <div className="flex items-center gap-1.5">
       <Icon className="h-3 w-3 text-muted-light" strokeWidth={1.8} />
-      <span className="text-[11px] font-semibold text-secondary">{count}</span>
+      <span className="text-xs font-semibold text-secondary">{count}</span>
       <span className="text-[10px] text-muted-light">{label}</span>
     </div>
   );
@@ -294,8 +294,8 @@ function StatCard({ label, value, accent, icon: Icon }: { label: string; value: 
     <div className="rounded-xl border border-neutral-200 bg-white p-5 shadow-sm">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-[11px] font-medium tracking-wide text-neutral-500 uppercase">{label}</p>
-          <p className={cn("mt-1 text-[28px] font-semibold leading-tight tracking-tight", accent)}>{value}</p>
+          <p className="text-xs font-medium tracking-wide text-neutral-500 uppercase">{label}</p>
+          <p className={cn("mt-1 text-2xl font-semibold leading-tight tracking-tight", accent)}>{value}</p>
         </div>
         <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-100">
           <Icon className="h-5 w-5 text-neutral-600" strokeWidth={1.8} />

@@ -136,21 +136,21 @@ export function Bed({ position, patient, bedId, onSelect }: BedProps) {
           }`}>
             <div className="flex items-center justify-between">
               <span className={`text-[10px] font-medium ${light ? "text-neutral-500" : "text-neutral-400"}`}>Bed {bedId}</span>
-              <span className={`text-[9px] font-semibold ${light ? "text-neutral-700" : "text-neutral-300"}`}>
+              <span className={`text-[10px] font-semibold ${light ? "text-neutral-700" : "text-neutral-300"}`}>
                 {getStatusLabel(patient)}
               </span>
             </div>
             {patient ? (
               <div className="mt-1.5">
-                <p className={`text-[11px] font-semibold ${light ? "text-neutral-900" : "text-white"}`}>{patient.name}</p>
-                <p className={`text-[9px] ${light ? "text-neutral-500" : "text-neutral-400"}`}>{patient.age}y · {patient.gender}</p>
+                <p className={`text-xs font-semibold ${light ? "text-neutral-900" : "text-white"}`}>{patient.name}</p>
+                <p className={`text-[10px] ${light ? "text-neutral-500" : "text-neutral-400"}`}>{patient.age}y · {patient.gender}</p>
                 <div className="mt-1.5 flex items-center gap-2">
                   <div className="flex-1">
                     <div className={`h-1 overflow-hidden rounded-full ${light ? "bg-neutral-200" : "bg-neutral-700"}`}>
                       <div className={`h-full rounded-full ${light ? "bg-neutral-500" : "bg-neutral-400"}`} style={{ width: `${patient.riskScore * 100}%` }} />
                     </div>
                   </div>
-                  <span className={`text-[9px] tabular-nums ${light ? "text-neutral-500" : "text-neutral-400"}`}>
+                  <span className={`text-[10px] tabular-nums ${light ? "text-neutral-500" : "text-neutral-400"}`}>
                     {(patient.riskScore * 100).toFixed(0)}%
                   </span>
                 </div>

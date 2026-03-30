@@ -66,7 +66,7 @@ function SettingsPage() {
   return (
     <div>
       <Header title="Settings" subtitle="Platform configuration and preferences" />
-      <div className="space-y-4 p-4 sm:space-y-6 sm:p-8">
+      <div className="space-y-6 p-4 sm:p-6">
         {SECTIONS.map(({ icon: Icon, title, description, items }) => (
           <Card key={title}>
             <CardHeader>
@@ -76,14 +76,14 @@ function SettingsPage() {
                 </div>
                 <div>
                   <CardTitle>{title}</CardTitle>
-                  <p className="text-[11px] text-neutral-500">{description}</p>
+                  <p className="text-xs text-neutral-500">{description}</p>
                 </div>
               </div>
             </CardHeader>
             <CardContent className="space-y-3">
               {items.map((item) => (
                 <div key={item.label} className="flex items-center justify-between rounded-lg border border-neutral-100 px-4 py-3">
-                  <span className="text-[13px] text-neutral-700">{item.label}</span>
+                  <span className="text-sm text-neutral-700">{item.label}</span>
                   <div className={`h-5 w-9 rounded-full transition-colors ${item.enabled ? "bg-sky-500" : "bg-neutral-300"}`}>
                     <div
                       className={`h-5 w-5 transform rounded-full bg-white shadow-sm transition-transform ${item.enabled ? "translate-x-4" : "translate-x-0"}`}

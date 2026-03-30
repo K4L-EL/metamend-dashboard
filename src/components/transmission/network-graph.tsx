@@ -116,7 +116,7 @@ function TransmissionNodeComponent({ data }: NodeProps) {
             style={{ backgroundColor: style.ring }}
           />
           <div className="min-w-0 flex-1">
-            <p className="truncate text-[12px] font-semibold" style={{ color: style.text }}>
+            <p className="truncate text-xs font-semibold" style={{ color: style.text }}>
               {node.patientName}
             </p>
             <p className="truncate text-[10px] text-gray-500">{node.ward}</p>
@@ -124,12 +124,12 @@ function TransmissionNodeComponent({ data }: NodeProps) {
         </div>
         <div className="mt-2 flex items-center justify-between">
           <span
-            className="rounded-full px-2 py-0.5 text-[9px] font-semibold"
+            className="rounded-full px-2 py-0.5 text-[10px] font-semibold"
             style={{ backgroundColor: style.border + "40", color: style.text }}
           >
             {node.nodeType}
           </span>
-          <span className="text-[9px] text-gray-400">{node.organism}</span>
+          <span className="text-[10px] text-gray-400">{node.organism}</span>
         </div>
       </div>
     </div>

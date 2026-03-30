@@ -38,20 +38,18 @@ function barShade(rate: number): string {
   return "bg-neutral-400";
 }
 
-function statusBadge(status: string): string {
+function statusBadgeVariant(status: string): string {
   switch (status.toLowerCase()) {
-    case "completed": return "bg-neutral-900 text-white";
-    case "overdue": return "bg-neutral-700 text-white";
-    case "pending": return "bg-neutral-200 text-neutral-700";
-    default: return "bg-neutral-100 text-neutral-600";
+    case "completed": return "success";
+    case "overdue": return "critical";
+    case "pending": return "default";
+    default: return "default";
   }
 }
 
-function resultBadge(result: string | null): string | null {
+function resultBadgeVariant(result: string | null): string | null {
   if (!result) return null;
-  return result === "Positive"
-    ? "bg-neutral-900 text-white"
-    : "bg-neutral-300 text-neutral-800";
+  return result === "Positive" ? "critical" : "default";
 }
 
 function ScreeningPage() {
@@ -91,7 +89,7 @@ function ScreeningPage() {
   return (
     <div>
       <Header title="Screening Compliance" subtitle="Admission screening and compliance tracking" />
-      <div className="space-y-4 p-4 sm:space-y-6 sm:p-8">
+      <div className="space-y-6 p-4 sm:p-6">
         {compliance.loading ? (
           <Loading />
         ) : (
@@ -99,8 +97,8 @@ function ScreeningPage() {
             {compliance.data?.map((ward) => (
               <Card key={ward.ward}>
                 <CardContent className="p-5">
-                  <p className="text-[11px] font-medium tracking-wide text-muted-light uppercase">{ward.ward}</p>
-                  <p className={cn("mt-1 text-[28px] font-semibold leading-tight tracking-tight", complianceShade(ward.complianceRate))}>
+                  <p className="text-[10px] font-medium tracking-wide text-neutral-400 uppercase">{ward.ward}</p>
+                  <p className={cn("mt-1 text-2xl font-semibold leading-tight tracking-tight", complianceShade(ward.complianceRate))}>
                     {(ward.complianceRate * 100).toFixed(0)}%
                   </p>
                   <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-neutral-200">
@@ -109,7 +107,7 @@ function ScreeningPage() {
                       style={{ width: `${ward.complianceRate * 100}%` }}
                     />
                   </div>
-                  <div className="mt-2 flex items-center justify-between text-[11px] text-muted">
+                  <div className="mt-2 flex items-center justify-between text-xs text-neutral-500">
                     <span>{ward.completed}/{ward.totalRequired} done</span>
                     {ward.overdue > 0 && <span className="font-medium text-neutral-900">{ward.overdue} overdue</span>}
                   </div>
@@ -123,7 +121,7 @@ function ScreeningPage() {
           <CardHeader>
             <CardTitle>Screening Records</CardTitle>
             <div className="flex items-center gap-3">
-              <span className="text-[11px] text-muted-light">{records.data?.length ?? 0} records</span>
+              <span className="text-xs text-neutral-400">{records.data?.length ?? 0} records</span>
               <Button size="sm" onClick={() => setOpen(true)}>
                 <Plus className="h-3.5 w-3.5" /> Add Screening
               </Button>
@@ -140,27 +138,31 @@ function ScreeningPage() {
                     <TableHead>Ward</TableHead>
                     <TableHead>Type</TableHead>
                     <TableHead>Status</TableHead>
-                    <TableHead>Due Date</TableHead>
-                    <TableHead>Completed</TableHead>
+                    <TableHead>Dates</TableHead>
                     <TableHead>Result</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {records.data?.map((rec) => (
                     <TableRow key={rec.id}>
-                      <TableCell className="font-medium text-primary">{rec.patientName}</TableCell>
-                      <TableCell>{rec.ward}</TableCell>
-                      <TableCell className="font-mono text-[11px] text-muted">{rec.screeningType}</TableCell>
-                      <TableCell><Badge variant={statusBadge(rec.status)}>{rec.status}</Badge></TableCell>
-                      <TableCell className="text-[12px] text-muted">{formatDate(rec.dueDate)}</TableCell>
-                      <TableCell className="text-[12px] text-muted">
-                        {rec.completedDate ? formatDate(rec.completedDate) : <span className="text-muted-light">--</span>}
+                      <TableCell className="font-medium text-neutral-900">{rec.patientName}</TableCell>
+                      <TableCell className="text-xs text-neutral-600">{rec.ward}</TableCell>
+                      <TableCell className="font-mono text-xs text-neutral-600">{rec.screeningType}</TableCell>
+                      <TableCell><Badge variant={statusBadgeVariant(rec.status)}>{rec.status}</Badge></TableCell>
+                      <TableCell className="text-xs text-neutral-500">
+                        <span>Due: {formatDate(rec.dueDate)}</span>
+                        {rec.completedDate && (
+                          <>
+                            <br />
+                            <span>Done: {formatDate(rec.completedDate)}</span>
+                          </>
+                        )}
                       </TableCell>
                       <TableCell>
                         {rec.result ? (
-                          <Badge variant={resultBadge(rec.result)!}>{rec.result}</Badge>
+                          <Badge variant={resultBadgeVariant(rec.result)!}>{rec.result}</Badge>
                         ) : (
-                          <span className="text-[12px] text-muted-light">--</span>
+                          <span className="text-xs text-neutral-400">--</span>
                         )}
                       </TableCell>
                     </TableRow>
@@ -190,7 +192,7 @@ function ScreeningPage() {
               <Input type="date" required value={form.dueDate} onChange={(e) => set("dueDate", e.target.value)} />
             </FormField>
           </div>
-          <div className="flex justify-end gap-3 border-t border-border pt-4">
+          <div className="flex justify-end gap-3 border-t border-neutral-200 pt-4">
             <Button type="button" variant="secondary" onClick={() => setOpen(false)}>Cancel</Button>
             <Button type="submit" disabled={submitting}>{submitting ? "Saving..." : "Add Screening"}</Button>
           </div>

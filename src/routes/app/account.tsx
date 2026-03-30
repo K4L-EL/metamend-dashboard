@@ -12,7 +12,7 @@ function AccountPage() {
   return (
     <div>
       <Header title="Account" subtitle="Your profile and access information" />
-      <div className="space-y-4 p-4 sm:space-y-6 sm:p-8 max-w-3xl">
+      <div className="space-y-6 p-4 sm:p-6 max-w-3xl">
         {/* Profile */}
         <Card>
           <CardContent className="p-6">
@@ -21,8 +21,8 @@ function AccountPage() {
                 KM
               </div>
               <div>
-                <h2 className="text-[18px] font-semibold text-neutral-900">Dr. Khalil Mohamed</h2>
-                <p className="text-[13px] text-neutral-500">Infection Prevention & Control Lead</p>
+                <h2 className="text-lg font-semibold text-neutral-900">Dr. Khalil Mohamed</h2>
+                <p className="text-sm text-neutral-500">Infection Prevention & Control Lead</p>
                 <div className="mt-1.5 flex items-center gap-2">
                   <Badge variant="metamed">Admin</Badge>
                   <Badge variant="success">Active</Badge>
@@ -60,7 +60,7 @@ function AccountPage() {
                 "Outbreaks", "Transmission", "Alerts", "Settings",
               ].map((perm) => (
                 <div key={perm} className="flex items-center justify-between rounded-lg border border-neutral-100 px-3 py-2">
-                  <span className="text-[12px] text-neutral-700">{perm}</span>
+                  <span className="text-xs text-neutral-700">{perm}</span>
                   <Badge variant="success" className="text-[10px]">Granted</Badge>
                 </div>
               ))}
@@ -77,9 +77,9 @@ function DetailRow({ icon: Icon, label, value }: { icon: typeof User; label: str
     <div className="flex items-center justify-between border-b border-neutral-100 pb-3 last:border-0 last:pb-0">
       <div className="flex items-center gap-2.5">
         <Icon className="h-4 w-4 text-neutral-400" strokeWidth={1.8} />
-        <span className="text-[12px] text-neutral-500">{label}</span>
+        <span className="text-xs text-neutral-500">{label}</span>
       </div>
-      <span className="text-[13px] font-medium text-neutral-900">{value}</span>
+      <span className="text-sm font-medium text-neutral-900">{value}</span>
     </div>
   );
 }

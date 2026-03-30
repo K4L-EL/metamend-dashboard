@@ -13,6 +13,7 @@ import {
   Workflow,
   Search,
   Microscope,
+  Plug,
   ChevronRight,
   Settings,
   HelpCircle,
@@ -43,15 +44,16 @@ const navSections: NavSection[] = [
     title: "Overview",
     items: [
       { to: "/app", icon: LayoutDashboard, label: "Dashboard", exact: true },
-      { to: "/app/alerts", icon: Bell, label: "Alerts", exact: false, badge: "3" },
+      { to: "/app/alerts", icon: Bell, label: "Alerts", exact: false },
     ],
   },
   {
-    title: "Surveillance",
+    title: "Clinical",
     items: [
-      { to: "/app/surveillance", icon: Activity, label: "Infections", exact: false, badge: "10" },
+      { to: "/app/surveillance", icon: Activity, label: "Infections", exact: false },
       { to: "/app/patients", icon: Users, label: "Patients", exact: false },
       { to: "/app/screening", icon: ClipboardCheck, label: "Screening", exact: false },
+      { to: "/app/devices", icon: Plug, label: "Devices", exact: false },
     ],
   },
   {
@@ -60,20 +62,9 @@ const navSections: NavSection[] = [
       { to: "/app/forecasting", icon: TrendingUp, label: "Risk Forecast", exact: false },
       { to: "/app/resistance", icon: FlaskConical, label: "AMR Tracking", exact: false },
       { to: "/app/hospital-map", icon: Building2, label: "Location Risk", exact: false },
-      { to: "/app/pipelines", icon: Workflow, label: "Data Pipelines", exact: false, badge: "New" },
-    ],
-  },
-  {
-    title: "Response",
-    items: [
-      { to: "/app/outbreaks", icon: Shield, label: "Outbreaks", exact: false, badge: "2" },
+      { to: "/app/outbreaks", icon: Shield, label: "Outbreaks", exact: false },
       { to: "/app/transmission", icon: Network, label: "Transmission", exact: false },
-    ],
-  },
-  {
-    title: "Learn",
-    items: [
-      { to: "/app/lab", icon: Microscope, label: "MetaMed Lab", exact: false },
+      { to: "/app/pipelines", icon: Workflow, label: "Data Pipelines", exact: false },
     ],
   },
 ];
@@ -115,7 +106,7 @@ export function AppSidebar({ mobile }: AppSidebarProps) {
           <img src="/logo.svg" alt="MetaMed" className="h-7 w-7 shrink-0 rounded-md shadow-md" />
           {!isCollapsed && (
             <div>
-              <span className="text-[13px] font-semibold tracking-tight text-white">MetaMed</span>
+              <span className="text-sm font-semibold tracking-tight text-white">MetaMed</span>
               <span className="ml-1 text-[10px] font-medium text-neutral-500">Intelligence</span>
             </div>
           )}
@@ -135,8 +126,8 @@ export function AppSidebar({ mobile }: AppSidebarProps) {
           <div className="px-3 pb-3 pt-3">
             <button className="flex w-full items-center gap-2 rounded-lg border border-neutral-800 bg-neutral-900/50 px-3 py-2 text-left transition-colors hover:bg-neutral-800/50">
               <Search className="h-3.5 w-3.5 text-neutral-500" strokeWidth={2} />
-              <span className="flex-1 text-[12px] text-neutral-500">Search...</span>
-              <kbd className="hidden rounded bg-neutral-800 px-1.5 py-0.5 text-[9px] text-neutral-600 sm:inline">⌘K</kbd>
+              <span className="flex-1 text-xs text-neutral-500">Search...</span>
+              <kbd className="hidden rounded bg-neutral-800 px-1.5 py-0.5 text-[10px] text-neutral-600 sm:inline">⌘K</kbd>
             </button>
           </div>
         )}
@@ -169,7 +160,7 @@ export function AppSidebar({ mobile }: AppSidebarProps) {
                     title={isCollapsed ? label : undefined}
                     onClick={handleNavClick}
                     className={cn(
-                      "group relative flex items-center rounded-lg text-[13px] font-medium transition-all",
+                      "group relative flex items-center rounded-lg text-sm font-medium transition-all",
                       isCollapsed ? "justify-center px-0 py-[7px]" : "gap-2.5 px-3 py-[6px]",
                       isActive
                         ? "bg-neutral-800 text-white shadow-sm"
@@ -180,7 +171,7 @@ export function AppSidebar({ mobile }: AppSidebarProps) {
                     <Icon className={cn("shrink-0", isCollapsed ? "h-4 w-4" : "h-[14px] w-[14px]", isActive ? "text-white" : "text-neutral-500 group-hover:text-neutral-300")} strokeWidth={1.8} />
                     {!isCollapsed && <span className="flex-1">{label}</span>}
                     {!isCollapsed && badge && (
-                      <span className="inline-flex h-[16px] min-w-[16px] items-center justify-center rounded-full bg-neutral-600 px-1.5 text-[9px] font-semibold text-white">
+                      <span className="inline-flex h-[16px] min-w-[16px] items-center justify-center rounded-full bg-neutral-600 px-1.5 text-[10px] font-semibold text-white">
                         {badge}
                       </span>
                     )}
@@ -198,6 +189,7 @@ export function AppSidebar({ mobile }: AppSidebarProps) {
 
       {/* Quick links */}
       <div className="shrink-0 space-y-px px-2 py-2">
+        <SidebarQuickLink to="/app/lab" icon={Microscope} label="MetaMed Lab" collapsed={isCollapsed} currentPath={currentPath} onClick={handleNavClick} />
         <SidebarQuickLink to="/app/settings" icon={Settings} label="Settings" collapsed={isCollapsed} currentPath={currentPath} onClick={handleNavClick} />
         <SidebarQuickLink to="/app/account" icon={HelpCircle} label="Account" collapsed={isCollapsed} currentPath={currentPath} onClick={handleNavClick} />
       </div>
@@ -213,7 +205,7 @@ export function AppSidebar({ mobile }: AppSidebarProps) {
           {!isCollapsed && (
             <>
               <div className="flex-1 min-w-0">
-                <p className="truncate text-[12px] font-medium text-neutral-200">Dr. K. Mohamed</p>
+                <p className="truncate text-xs font-medium text-neutral-200">Dr. K. Mohamed</p>
                 <p className="truncate text-[10px] text-neutral-500">IPC Lead · Admin</p>
               </div>
               <LogOut className="h-3.5 w-3.5 shrink-0 text-neutral-500 hover:text-neutral-300" strokeWidth={1.8} />
@@ -237,7 +229,7 @@ export function AppSidebar({ mobile }: AppSidebarProps) {
             ) : (
               <>
                 <PanelLeftClose className="h-[14px] w-[14px] shrink-0" strokeWidth={1.8} />
-                <span className="text-[12px] font-medium">Collapse</span>
+                <span className="text-xs font-medium">Collapse</span>
               </>
             )}
           </button>
@@ -255,7 +247,7 @@ function SidebarQuickLink({ to, icon: Icon, label, collapsed, currentPath, onCli
       title={collapsed ? label : undefined}
       onClick={onClick}
       className={cn(
-        "flex w-full items-center rounded-lg text-left text-[12px] font-medium transition-colors",
+        "flex w-full items-center rounded-lg text-left text-xs font-medium transition-colors",
         collapsed ? "justify-center px-0 py-[7px]" : "gap-2.5 px-3 py-[6px]",
         isActive
           ? "bg-neutral-800 text-white"

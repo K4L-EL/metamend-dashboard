@@ -1,6 +1,5 @@
-import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { Maximize2, Minimize2, AlertTriangle, MapPin } from "lucide-react";
+import { AlertTriangle, MapPin } from "lucide-react";
 import { Header } from "../../components/layout/header";
 import { Badge } from "../../components/ui/badge";
 import { Loading } from "../../components/ui/loading";
@@ -22,7 +21,6 @@ function ForecastingPage() {
   const riskScores = useAsync(() => api.forecasts.getRiskScores(), []);
   const locationRisks = useAsync(() => api.forecasts.getLocationRisks(), []);
   const trends = useAsync(() => api.forecasts.getTrends(14), []);
-  const [expandedChart, setExpandedChart] = useState<"forecast" | "location" | null>(null);
 
   if (riskScores.loading && locationRisks.loading) return <Loading />;
 
@@ -37,48 +35,19 @@ function ForecastingPage() {
         title="Forecasting"
         subtitle="Risk analytics and predictive models"
       />
-      <div className="space-y-4 p-4 sm:space-y-6 sm:p-8">
-        {/* Charts — expandable */}
-        {expandedChart !== "location" && (
-          <div className={cn(expandedChart === "forecast" && "relative")}>
-            {trends.data && (
-              <div className="relative">
-                <ForecastChart data={trends.data} />
-                <button
-                  onClick={() => setExpandedChart(expandedChart === "forecast" ? null : "forecast")}
-                  className="absolute top-3 right-3 rounded-md border border-neutral-200 bg-white p-1.5 text-neutral-500 shadow-sm hover:text-neutral-900"
-                >
-                  {expandedChart === "forecast" ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
-                </button>
-              </div>
-            )}
-          </div>
-        )}
+      <div className="space-y-6 p-4 sm:p-6">
+        <div className="grid gap-5 lg:grid-cols-2">
+          {trends.data && <ForecastChart data={trends.data} />}
+          {locationRisks.data && <RiskDistributionChart data={locationRisks.data} />}
+        </div>
 
-        {expandedChart !== "forecast" && (
-          <div>
-            {locationRisks.data && (
-              <div className="relative">
-                <RiskDistributionChart data={locationRisks.data} />
-                <button
-                  onClick={() => setExpandedChart(expandedChart === "location" ? null : "location")}
-                  className="absolute top-3 right-3 rounded-md border border-neutral-200 bg-white p-1.5 text-neutral-500 shadow-sm hover:text-neutral-900"
-                >
-                  {expandedChart === "location" ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
-                </button>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Critical Risk Patients */}
         <Card>
           <CardHeader>
             <div className="flex items-center gap-2">
               <AlertTriangle className="h-4 w-4 text-red-500" />
               <CardTitle>Critical Risk Patients</CardTitle>
             </div>
-            <span className="text-[11px] text-neutral-400">
+            <span className="text-xs text-neutral-400">
               Highest combined risk scores
             </span>
           </CardHeader>
@@ -86,7 +55,7 @@ function ForecastingPage() {
             {riskScores.loading ? (
               <Loading />
             ) : criticalPatients.length === 0 ? (
-              <p className="py-8 text-center text-[13px] text-neutral-400">No critical risk patients detected</p>
+              <p className="py-8 text-center text-sm text-neutral-400">No critical risk patients detected</p>
             ) : (
               <Table>
                 <TableHeader>
@@ -121,7 +90,7 @@ function ForecastingPage() {
                               style={{ width: `${score.score * 100}%` }}
                             />
                           </div>
-                          <span className="font-mono text-[11px] text-neutral-600">
+                          <span className="font-mono text-xs text-neutral-600">
                             {(score.score * 100).toFixed(1)}%
                           </span>
                         </div>

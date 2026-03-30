@@ -68,8 +68,8 @@ export const FlowNode = memo(({ data }: NodeProps) => {
           <Icon className="h-3.5 w-3.5" strokeWidth={2} />
         </div>
         <div className="flex-1 min-w-0">
-          <p className="truncate text-[12px] font-semibold text-gray-900">{nodeData.label}</p>
-          <p className="text-[9px] font-medium uppercase tracking-wide text-gray-400">{kind}</p>
+          <p className="truncate text-xs font-semibold text-gray-900">{nodeData.label}</p>
+          <p className="text-[10px] font-medium uppercase tracking-wide text-gray-400">{kind}</p>
         </div>
         <div className={cn("h-1.5 w-1.5 rounded-full", style.accent)} />
       </div>

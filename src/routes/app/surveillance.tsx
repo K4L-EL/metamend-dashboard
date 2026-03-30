@@ -5,6 +5,7 @@ import { Header } from "../../components/layout/header";
 import { Badge } from "../../components/ui/badge";
 import { Button } from "../../components/ui/button";
 import { Loading } from "../../components/ui/loading";
+import { StatCard } from "../../components/ui/stat-card";
 import { Modal } from "../../components/ui/modal";
 import { FormField, Input, Select } from "../../components/ui/form-field";
 import {
@@ -55,18 +56,18 @@ function SurveillancePage() {
   return (
     <div>
       <Header title="Surveillance" subtitle="Real-time infection monitoring and tracking" />
-      <div className="space-y-4 p-4 sm:space-y-6 sm:p-8">
+      <div className="space-y-6 p-4 sm:p-6">
         <div className="grid gap-4 sm:grid-cols-3">
-          <MetricCard label="Total Active" value={infections.data?.filter((i) => i.status === "Active").length ?? 0} accent="bg-red-500" />
-          <MetricCard label="HAI Cases" value={infections.data?.filter((i) => i.isHai).length ?? 0} accent="bg-neutral-500" />
-          <MetricCard label="Under Monitoring" value={infections.data?.filter((i) => i.status === "Monitoring").length ?? 0} accent="bg-sky-500" />
+          <StatCard title="Total Active" value={infections.data?.filter((i) => i.status === "Active").length ?? 0} accent="danger" />
+          <StatCard title="HAI Cases" value={infections.data?.filter((i) => i.isHai).length ?? 0} accent="warning" />
+          <StatCard title="Under Monitoring" value={infections.data?.filter((i) => i.status === "Monitoring").length ?? 0} accent="metamed" />
         </div>
 
         <Card>
           <CardHeader>
             <CardTitle>Active Infections</CardTitle>
             <div className="flex items-center gap-3">
-              <span className="text-[11px] text-muted-light">{infections.data?.length ?? 0} records</span>
+              <span className="text-xs text-neutral-400">{infections.data?.length ?? 0} records</span>
               <Button size="sm" onClick={() => setOpen(true)}>
                 <Plus className="h-3.5 w-3.5" /> Log Infection
               </Button>
@@ -86,20 +87,23 @@ function SurveillancePage() {
                     <TableHead>Severity</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead>Detected</TableHead>
-                    <TableHead>HAI</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {infections.data?.map((infection) => (
                     <TableRow key={infection.id}>
-                      <TableCell className="font-medium text-primary">{infection.patientName}</TableCell>
-                      <TableCell className="font-mono text-[11px] text-muted">{infection.organism}</TableCell>
-                      <TableCell>{infection.type}</TableCell>
-                      <TableCell>{infection.ward}</TableCell>
+                      <TableCell className="font-medium text-neutral-900">{infection.patientName}</TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-1.5">
+                          <span className="font-mono text-xs text-neutral-600">{infection.organism}</span>
+                          {infection.isHai && <Badge variant="critical">HAI</Badge>}
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-xs text-neutral-600">{infection.type}</TableCell>
+                      <TableCell className="text-xs text-neutral-600">{infection.ward}</TableCell>
                       <TableCell><Badge variant={severityColor(infection.severity)}>{infection.severity}</Badge></TableCell>
                       <TableCell><Badge variant={statusColor(infection.status)}>{infection.status}</Badge></TableCell>
-                      <TableCell className="text-[12px] text-muted">{formatDateTime(infection.detectedAt)}</TableCell>
-                      <TableCell>{infection.isHai && <span className="inline-block h-2 w-2 rounded-full bg-red-500" />}</TableCell>
+                      <TableCell className="text-xs text-neutral-500">{formatDateTime(infection.detectedAt)}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -146,30 +150,18 @@ function SurveillancePage() {
               </Select>
             </FormField>
             <FormField label="Healthcare-Associated">
-              <label className="mt-1 flex items-center gap-2 text-[13px] text-secondary">
-                <input type="checkbox" checked={form.isHai} onChange={(e) => set("isHai", e.target.checked)} className="h-4 w-4 rounded border-border text-accent" />
+              <label className="mt-1 flex items-center gap-2 text-sm text-neutral-600">
+                <input type="checkbox" checked={form.isHai} onChange={(e) => set("isHai", e.target.checked)} className="h-4 w-4 rounded border-neutral-300 text-sky-500" />
                 HAI
               </label>
             </FormField>
           </div>
-          <div className="flex justify-end gap-3 border-t border-border pt-4">
+          <div className="flex justify-end gap-3 border-t border-neutral-200 pt-4">
             <Button type="button" variant="secondary" onClick={() => setOpen(false)}>Cancel</Button>
             <Button type="submit" disabled={submitting}>{submitting ? "Saving..." : "Log Infection"}</Button>
           </div>
         </form>
       </Modal>
-    </div>
-  );
-}
-
-function MetricCard({ label, value, accent }: { label: string; value: number; accent: string }) {
-  return (
-    <div className="rounded-2xl border border-border bg-surface-raised p-5 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
-      <div className="flex items-center gap-2.5">
-        <div className={`h-2 w-2 rounded-full ${accent}`} />
-        <p className="text-[11px] font-medium tracking-wide text-muted-light uppercase">{label}</p>
-      </div>
-      <p className="mt-2 text-[28px] font-semibold leading-tight tracking-tight text-primary">{value}</p>
     </div>
   );
 }

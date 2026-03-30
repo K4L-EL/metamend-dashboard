@@ -158,13 +158,13 @@ function LabPage() {
   return (
     <div>
       <Header title="MetaMed Lab" subtitle="How the intelligence platform works — methodology and technical details" />
-      <div className="space-y-4 p-4 sm:space-y-6 sm:p-8">
+      <div className="space-y-6 p-4 sm:p-6">
         <div className="rounded-xl border border-sky-200 bg-sky-50/50 p-5">
           <div className="flex items-start gap-3">
             <Sparkles className="mt-0.5 h-5 w-5 text-sky-600" strokeWidth={1.8} />
             <div>
-              <h3 className="text-[14px] font-semibold text-neutral-900">Understanding MetaMed</h3>
-              <p className="mt-1 text-[13px] leading-relaxed text-neutral-600">
+              <h3 className="text-sm font-semibold text-neutral-900">Understanding MetaMed</h3>
+              <p className="mt-1 text-sm leading-relaxed text-neutral-600">
                 MetaMed is a system-wide infection intelligence platform. Below is a detailed explanation of each module —
                 what it does, how it works, and the methodology behind it. Click any feature to explore the technical details.
               </p>
@@ -192,10 +192,10 @@ function LabPage() {
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2">
-                        <h3 className="text-[14px] font-semibold text-neutral-900">{feature.title}</h3>
+                        <h3 className="text-sm font-semibold text-neutral-900">{feature.title}</h3>
                         <Badge variant={feature.tagColor as "metamed"}>{feature.tag}</Badge>
                       </div>
-                      <p className="mt-0.5 text-[12px] text-neutral-500">{feature.summary}</p>
+                      <p className="mt-0.5 text-xs text-neutral-500">{feature.summary}</p>
                     </div>
                     {isOpen
                       ? <ChevronUp className="h-4 w-4 shrink-0 text-neutral-400" />
@@ -205,19 +205,19 @@ function LabPage() {
                   {isOpen && (
                     <div className="border-t border-neutral-100 px-5 py-4 space-y-4">
                       <div>
-                        <h4 className="text-[11px] font-semibold tracking-wider text-neutral-400 uppercase">How it works</h4>
+                        <h4 className="text-xs font-semibold tracking-wider text-neutral-400 uppercase">How it works</h4>
                         <ul className="mt-2 space-y-2">
                           {feature.details.map((d, i) => (
                             <li key={i} className="flex items-start gap-2">
                               <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-sky-400" />
-                              <span className="text-[13px] leading-relaxed text-neutral-600">{d}</span>
+                              <span className="text-sm leading-relaxed text-neutral-600">{d}</span>
                             </li>
                           ))}
                         </ul>
                       </div>
                       <div className="rounded-lg border border-neutral-200 bg-neutral-50 p-4">
-                        <h4 className="text-[11px] font-semibold tracking-wider text-neutral-400 uppercase">Methodology</h4>
-                        <p className="mt-2 text-[12px] leading-relaxed text-neutral-600">{feature.methodology}</p>
+                        <h4 className="text-xs font-semibold tracking-wider text-neutral-400 uppercase">Methodology</h4>
+                        <p className="mt-2 text-xs leading-relaxed text-neutral-600">{feature.methodology}</p>
                       </div>
                     </div>
                   )}

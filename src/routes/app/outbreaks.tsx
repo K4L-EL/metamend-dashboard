@@ -2,18 +2,19 @@ import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import {
   AlertTriangle, CheckCircle2, Clock, Search, Plus,
-  FileText, Download, Bot, ChevronDown, ChevronUp,
+  FileText, Download,
 } from "lucide-react";
 import { Header } from "../../components/layout/header";
 import { Badge } from "../../components/ui/badge";
 import { Button } from "../../components/ui/button";
 import { Loading } from "../../components/ui/loading";
+import { StatCard } from "../../components/ui/stat-card";
 import { Card, CardHeader, CardTitle, CardContent } from "../../components/ui/card";
 import { Modal } from "../../components/ui/modal";
 import { FormField, Input, Select } from "../../components/ui/form-field";
 import { useAsync } from "../../hooks/use-async";
 import { api } from "../../lib/api";
-import { formatDate, severityColor, statusColor, cn } from "../../lib/utils";
+import { formatDate, severityColor, statusColor } from "../../lib/utils";
 import type { Outbreak, CreateOutbreakRequest } from "../../types";
 
 export const Route = createFileRoute("/app/outbreaks")({
@@ -138,7 +139,6 @@ function OutbreaksPage() {
   const [form, setForm] = useState(EMPTY_FORM);
   const [submitting, setSubmitting] = useState(false);
   const [reportOutbreak, setReportOutbreak] = useState<Outbreak | null>(null);
-  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const set = (field: keyof CreateOutbreakRequest, value: string | number) =>
     setForm((f) => ({ ...f, [field]: value }));
@@ -170,13 +170,11 @@ function OutbreaksPage() {
   return (
     <div>
       <Header title="Outbreaks" subtitle="Outbreak detection and investigation tracking" />
-      <div className="space-y-4 p-4 sm:space-y-6 sm:p-8">
-        <div className="flex items-center justify-between">
-          <div className="grid flex-1 gap-4 sm:grid-cols-3">
-            <MetricCard label="Active" value={outbreaks.data?.filter((o) => o.status === "Active").length ?? 0} shade="bg-red-500" />
-            <MetricCard label="Under Investigation" value={outbreaks.data?.filter((o) => o.status === "Suspected").length ?? 0} shade="bg-neutral-500" />
-            <MetricCard label="Resolved (30d)" value={outbreaks.data?.filter((o) => o.status === "Resolved").length ?? 0} shade="bg-neutral-500" />
-          </div>
+      <div className="space-y-6 p-4 sm:p-6">
+        <div className="grid gap-4 sm:grid-cols-3">
+          <StatCard title="Active" value={outbreaks.data?.filter((o) => o.status === "Active").length ?? 0} accent="danger" />
+          <StatCard title="Under Investigation" value={outbreaks.data?.filter((o) => o.status === "Suspected").length ?? 0} accent="warning" />
+          <StatCard title="Resolved (30d)" value={outbreaks.data?.filter((o) => o.status === "Resolved").length ?? 0} accent="success" />
         </div>
 
         <div className="flex justify-end">
@@ -231,7 +229,6 @@ function OutbreaksPage() {
         )}
       </div>
 
-      {/* Report modal */}
       <Modal
         open={!!reportOutbreak}
         onClose={() => setReportOutbreak(null)}
@@ -240,7 +237,7 @@ function OutbreaksPage() {
       >
         {reportOutbreak && (
           <div className="space-y-4">
-            <pre className="max-h-[400px] overflow-y-auto whitespace-pre-wrap rounded-lg border border-neutral-200 bg-neutral-50 p-4 font-mono text-[11px] leading-relaxed text-neutral-700">
+            <pre className="max-h-[400px] overflow-y-auto whitespace-pre-wrap rounded-lg border border-neutral-200 bg-neutral-50 p-4 font-mono text-xs leading-relaxed text-neutral-700">
               {generateReport(reportOutbreak)}
             </pre>
             <div className="flex justify-end gap-3 border-t border-neutral-200 pt-4">
@@ -253,7 +250,6 @@ function OutbreaksPage() {
         )}
       </Modal>
 
-      {/* Create outbreak modal */}
       <Modal open={open} onClose={() => setOpen(false)} title="Report Outbreak" subtitle="Log a suspected or confirmed outbreak">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
@@ -288,23 +284,11 @@ function OutbreaksPage() {
   );
 }
 
-function MetricCard({ label, value, shade }: { label: string; value: number; shade: string }) {
-  return (
-    <div className="rounded-2xl border border-neutral-200 bg-white p-5 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
-      <div className="flex items-center gap-2.5">
-        <div className={cn("h-2 w-2 rounded-full", shade)} />
-        <p className="text-[11px] font-medium tracking-wide text-neutral-400 uppercase">{label}</p>
-      </div>
-      <p className="mt-2 text-[28px] font-semibold leading-tight tracking-tight text-neutral-900">{value}</p>
-    </div>
-  );
-}
-
 function Detail({ label, value }: { label: string; value: string }) {
   return (
     <div>
       <p className="text-[10px] font-medium tracking-wider text-neutral-400 uppercase">{label}</p>
-      <p className="mt-0.5 text-[13px] text-neutral-600">{value}</p>
+      <p className="mt-0.5 text-sm text-neutral-600">{value}</p>
     </div>
   );
 }

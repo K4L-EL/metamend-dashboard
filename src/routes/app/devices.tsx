@@ -5,6 +5,7 @@ import { Header } from "../../components/layout/header";
 import { Badge } from "../../components/ui/badge";
 import { Button } from "../../components/ui/button";
 import { Loading } from "../../components/ui/loading";
+import { StatCard } from "../../components/ui/stat-card";
 import { Card, CardHeader, CardTitle, CardContent } from "../../components/ui/card";
 import { Modal } from "../../components/ui/modal";
 import { FormField, Input, Select } from "../../components/ui/form-field";
@@ -27,12 +28,6 @@ const WARDS = ["ICU-A", "ICU-B", "Ward 2A", "Ward 3B", "Ward 4C", "Surgical", "E
 const EMPTY_FORM: CreateDeviceInfectionRequest = {
   patientId: "", patientName: "", deviceType: DEVICE_TYPES[0]!, organism: ORGANISMS[0]!, ward: WARDS[0]!, insertionDate: "", infectionDate: "",
 };
-
-function rateShade(rate: number): string {
-  if (rate > 0.15) return "text-neutral-900";
-  if (rate > 0.05) return "text-neutral-600";
-  return "text-neutral-400";
-}
 
 function DevicesPage() {
   const summaries = useAsync(() => api.devices.getSummaries(), []);
@@ -71,7 +66,7 @@ function DevicesPage() {
   return (
     <div>
       <Header title="Device Surveillance" subtitle="Infections linked to catheters, lines, and medical devices" />
-      <div className="space-y-4 p-4 sm:space-y-6 sm:p-8">
+      <div className="space-y-6 p-4 sm:p-6">
         {summaries.loading ? (
           <Loading />
         ) : (
@@ -79,22 +74,22 @@ function DevicesPage() {
             {summaries.data?.map((d) => (
               <Card key={d.deviceType}>
                 <CardContent className="p-5">
-                  <p className="text-[11px] font-medium tracking-wide text-muted-light uppercase">{d.deviceType}</p>
-                  <p className={cn("mt-1 text-[24px] font-semibold leading-tight tracking-tight", rateShade(d.infectionRate))}>
+                  <p className="text-[10px] font-medium tracking-wide text-neutral-400 uppercase">{d.deviceType}</p>
+                  <p className={cn("mt-1 text-2xl font-semibold leading-tight tracking-tight", d.infectionRate > 0.15 ? "text-neutral-900" : d.infectionRate > 0.05 ? "text-neutral-600" : "text-neutral-400")}>
                     {(d.infectionRate * 100).toFixed(1)}%
                   </p>
-                  <p className="mt-0.5 text-[11px] text-muted">infection rate</p>
-                  <div className="mt-3 grid grid-cols-2 gap-2 border-t border-border pt-3">
+                  <p className="mt-0.5 text-xs text-neutral-500">infection rate</p>
+                  <div className="mt-3 grid grid-cols-2 gap-2 border-t border-neutral-200 pt-3">
                     <div>
-                      <p className="text-[10px] text-muted-light">Devices</p>
-                      <p className="text-[13px] font-semibold text-primary">{d.totalDevices}</p>
+                      <p className="text-[10px] text-neutral-400">Devices</p>
+                      <p className="text-sm font-semibold text-neutral-900">{d.totalDevices}</p>
                     </div>
                     <div>
-                      <p className="text-[10px] text-muted-light">Infections</p>
-                      <p className="text-[13px] font-semibold text-neutral-900">{d.infections}</p>
+                      <p className="text-[10px] text-neutral-400">Infections</p>
+                      <p className="text-sm font-semibold text-neutral-900">{d.infections}</p>
                     </div>
                   </div>
-                  <p className="mt-2 text-[10px] text-muted">Avg {d.avgDaysToInfection.toFixed(1)} days to infection</p>
+                  <p className="mt-2 text-[10px] text-neutral-500">Avg {d.avgDaysToInfection.toFixed(1)} days to infection</p>
                 </CardContent>
               </Card>
             ))}
@@ -105,7 +100,7 @@ function DevicesPage() {
           <CardHeader>
             <CardTitle>Device-Associated Infections</CardTitle>
             <div className="flex items-center gap-3">
-              <span className="text-[11px] text-muted-light">{infections.data?.length ?? 0} records</span>
+              <span className="text-xs text-neutral-400">{infections.data?.length ?? 0} records</span>
               <Button size="sm" onClick={() => setOpen(true)}>
                 <Plus className="h-3.5 w-3.5" /> Log Device Infection
               </Button>
@@ -124,25 +119,27 @@ function DevicesPage() {
                     <TableHead>Ward</TableHead>
                     <TableHead>Days to Infection</TableHead>
                     <TableHead>Status</TableHead>
-                    <TableHead>Insertion</TableHead>
-                    <TableHead>Infection</TableHead>
+                    <TableHead>Dates</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {infections.data?.map((inf) => (
                     <TableRow key={inf.id}>
-                      <TableCell className="font-medium text-primary">{inf.patientName}</TableCell>
-                      <TableCell>{inf.deviceType}</TableCell>
-                      <TableCell className="font-mono text-[11px] text-muted">{inf.organism}</TableCell>
-                      <TableCell>{inf.ward}</TableCell>
+                      <TableCell className="font-medium text-neutral-900">{inf.patientName}</TableCell>
+                      <TableCell className="text-xs text-neutral-600">{inf.deviceType}</TableCell>
+                      <TableCell className="font-mono text-xs text-neutral-600">{inf.organism}</TableCell>
+                      <TableCell className="text-xs text-neutral-600">{inf.ward}</TableCell>
                       <TableCell>
-                        <span className={cn("font-mono text-[12px]", inf.daysToInfection > 7 ? "text-neutral-900 font-semibold" : "text-secondary")}>
+                        <span className={cn("font-mono text-xs", inf.daysToInfection > 7 ? "text-neutral-900 font-semibold" : "text-neutral-500")}>
                           {inf.daysToInfection}d
                         </span>
                       </TableCell>
                       <TableCell><Badge variant={statusColor(inf.status)}>{inf.status}</Badge></TableCell>
-                      <TableCell className="text-[12px] text-muted">{formatDate(inf.insertionDate)}</TableCell>
-                      <TableCell className="text-[12px] text-muted">{formatDate(inf.infectionDate)}</TableCell>
+                      <TableCell className="text-xs text-neutral-500">
+                        <span>Ins: {formatDate(inf.insertionDate)}</span>
+                        <br />
+                        <span>Inf: {formatDate(inf.infectionDate)}</span>
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -185,7 +182,7 @@ function DevicesPage() {
               <Input type="date" required value={form.infectionDate} onChange={(e) => set("infectionDate", e.target.value)} />
             </FormField>
           </div>
-          <div className="flex justify-end gap-3 border-t border-border pt-4">
+          <div className="flex justify-end gap-3 border-t border-neutral-200 pt-4">
             <Button type="button" variant="secondary" onClick={() => setOpen(false)}>Cancel</Button>
             <Button type="submit" disabled={submitting}>{submitting ? "Saving..." : "Log Infection"}</Button>
           </div>
