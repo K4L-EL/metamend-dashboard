@@ -1,4 +1,5 @@
-import { X } from "lucide-react";
+import { X, ExternalLink } from "lucide-react";
+import { useNavigate } from "@tanstack/react-router";
 import type { Patient } from "../../types";
 import { Badge } from "../ui/badge";
 import { severityColor } from "../../lib/utils";
@@ -31,6 +32,7 @@ function barShade(score: number, light: boolean): string {
 
 export function BedPanel({ patient, onClose, light }: BedPanelProps) {
   const level = riskLevel(patient.riskScore);
+  const navigate = useNavigate();
 
   return (
     <div
@@ -100,6 +102,18 @@ export function BedPanel({ patient, onClose, light }: BedPanelProps) {
             </div>
           </div>
         )}
+
+        <button
+          onClick={() => navigate({ to: "/app/patients", search: { patientId: patient.id } })}
+          className={`mt-1 flex w-full items-center justify-center gap-1.5 rounded-lg border px-3 py-1.5 text-[11px] font-medium transition-colors ${
+            light
+              ? "border-neutral-300 bg-neutral-50 text-neutral-700 hover:bg-neutral-100"
+              : "border-neutral-600 bg-neutral-800 text-neutral-300 hover:bg-neutral-700"
+          }`}
+        >
+          <ExternalLink className="h-3 w-3" />
+          View Patient Profile
+        </button>
       </div>
     </div>
   );

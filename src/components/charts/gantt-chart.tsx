@@ -12,6 +12,7 @@ export interface GanttPatient {
 interface GanttChartProps {
   patients: GanttPatient[];
   title?: string;
+  onPatientClick?: (patientId: string) => void;
 }
 
 const WARD_COLORS: Record<string, string> = {
@@ -25,7 +26,7 @@ const WARD_COLORS: Record<string, string> = {
   "Neonatal": "#bbf7d0",
 };
 
-export function GanttChart({ patients, title }: GanttChartProps) {
+export function GanttChart({ patients, title, onPatientClick }: GanttChartProps) {
   const [hoveredRow, setHoveredRow] = useState<string | null>(null);
 
   const { startDate, endDate, totalDays, dayWidth } = useMemo(() => {
@@ -82,7 +83,13 @@ export function GanttChart({ patients, title }: GanttChartProps) {
               onMouseEnter={() => setHoveredRow(p.id)}
               onMouseLeave={() => setHoveredRow(null)}
             >
-              <span className="text-xs text-neutral-700">{p.name}</span>
+              {onPatientClick ? (
+                <button className="text-xs font-medium text-sky-600 hover:underline" onClick={() => onPatientClick(p.id)}>
+                  {p.name}
+                </button>
+              ) : (
+                <span className="text-xs text-neutral-700">{p.name}</span>
+              )}
             </div>
           ))}
         </div>

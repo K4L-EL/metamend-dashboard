@@ -1,8 +1,8 @@
-import { useState, useMemo } from "react";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useState, useMemo, useEffect } from "react";
+import { createFileRoute, useNavigate, useSearch } from "@tanstack/react-router";
 import {
   Plus, X, MapPin, Activity, ShieldAlert, Search,
-  AlertTriangle, TrendingUp, BarChart3,
+  AlertTriangle, TrendingUp, BarChart3, GitBranch,
 } from "lucide-react";
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -22,6 +22,9 @@ import type { Patient, CreatePatientRequest } from "../../types";
 
 export const Route = createFileRoute("/app/patients")({
   component: PatientsPage,
+  validateSearch: (search: Record<string, unknown>) => ({
+    patientId: (search.patientId as string) ?? undefined,
+  }),
 });
 
 const WARDS = ["ICU-A", "ICU-B", "Ward 2A", "Ward 3B", "Ward 4C", "Surgical", "Emergency", "Neonatal"];
@@ -82,14 +85,23 @@ type ListTab = "at-risk" | "infections" | "clusters";
 
 function PatientsPage() {
   const navigate = useNavigate();
+  const { patientId } = useSearch({ from: "/app/patients" });
   const patients = useAsync(() => api.patients.getAll(), []);
   const infections = useAsync(() => api.infections.getAll(), []);
+  const transmission = useAsync(() => api.transmission.getNetwork(), []);
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState(EMPTY_FORM);
   const [submitting, setSubmitting] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
   const [listTab, setListTab] = useState<ListTab>("at-risk");
   const [searchQuery, setSearchQuery] = useState("");
+
+  useEffect(() => {
+    if (patientId && patients.data && !selectedPatient) {
+      const found = patients.data.find((p) => p.id === patientId);
+      if (found) setSelectedPatient(found);
+    }
+  }, [patientId, patients.data, selectedPatient]);
 
   const set = (field: keyof CreatePatientRequest, value: string | number) =>
     setForm((f) => ({ ...f, [field]: value }));
@@ -367,6 +379,83 @@ function PatientsPage() {
                   </div>
                 </div>
               )}
+
+              {/* Connection diagram */}
+              {transmission.data && (() => {
+                const patientLinks = transmission.data.links.filter(
+                  (l) => l.sourceId === selectedPatient.id || l.targetId === selectedPatient.id,
+                );
+                if (patientLinks.length === 0) return null;
+                const connectedIds = new Set<string>([selectedPatient.id]);
+                patientLinks.forEach((l) => { connectedIds.add(l.sourceId); connectedIds.add(l.targetId); });
+                const connectedNodes = transmission.data.nodes.filter((n) => connectedIds.has(n.id));
+
+                return (
+                  <div>
+                    <div className="mb-3 flex items-center gap-2">
+                      <GitBranch className="h-4 w-4 text-neutral-500" />
+                      <h3 className="text-sm font-semibold text-neutral-900">Contact Network</h3>
+                    </div>
+                    <p className="mb-3 text-[10px] text-neutral-400">Transmission links for this patient. Click a node to navigate.</p>
+                    <div className="rounded-lg border border-neutral-200 bg-neutral-50 p-4">
+                      <div className="flex flex-col items-center gap-4">
+                        {/* Center patient node */}
+                        <div className="flex h-14 w-14 items-center justify-center rounded-full border-2 border-sky-400 bg-sky-50">
+                          <span className="text-[10px] font-bold text-sky-700">
+                            {selectedPatient.name.split(" ").map((n) => n[0]).join("")}
+                          </span>
+                        </div>
+                        <span className="text-xs font-medium text-neutral-700">{selectedPatient.name}</span>
+
+                        {/* Links */}
+                        <div className="flex flex-wrap justify-center gap-3">
+                          {connectedNodes
+                            .filter((n) => n.id !== selectedPatient.id)
+                            .map((node) => {
+                              const link = patientLinks.find(
+                                (l) => l.sourceId === node.id || l.targetId === node.id,
+                              );
+                              const isPatient = node.id.startsWith("P");
+                              const matchedPatient = isPatient ? patients.data?.find((p) => p.id === node.id) : null;
+                              return (
+                                <div
+                                  key={node.id}
+                                  className={cn(
+                                    "flex flex-col items-center gap-1 rounded-lg border p-3 transition-colors",
+                                    isPatient ? "cursor-pointer border-neutral-200 hover:border-sky-300 hover:bg-sky-50" : "border-neutral-200",
+                                  )}
+                                  onClick={() => {
+                                    if (matchedPatient) setSelectedPatient(matchedPatient);
+                                  }}
+                                >
+                                  <div className={cn(
+                                    "flex h-10 w-10 items-center justify-center rounded-full border",
+                                    node.nodeType === "Index" ? "border-red-300 bg-red-50" :
+                                    node.nodeType === "Environmental" ? "border-sky-300 bg-sky-50" :
+                                    node.nodeType === "HCW" ? "border-blue-300 bg-blue-50" :
+                                    "border-neutral-300 bg-neutral-100",
+                                  )}>
+                                    <span className="text-[9px] font-bold text-neutral-600">
+                                      {node.patientName.split(" ").map((n) => n[0]).join("")}
+                                    </span>
+                                  </div>
+                                  <span className="text-[10px] font-medium text-neutral-700">{node.patientName}</span>
+                                  <span className="text-[9px] text-neutral-400">{node.ward}</span>
+                                  {link && (
+                                    <Badge className="text-[8px] px-1.5 py-0">{link.linkType}</Badge>
+                                  )}
+                                  {link && (
+                                    <span className="text-[9px] tabular-nums text-neutral-400">{Math.round(link.confidence * 100)}% confidence</span>
+                                  )}
+                                </div>
+                              );
+                            })}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
             </div>
           </div>
         ) : (

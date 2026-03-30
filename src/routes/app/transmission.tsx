@@ -1,6 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState, useMemo } from "react";
-import { X, Users, Link2, GitBranch, Bot, Maximize2, Minimize2 } from "lucide-react";
+import { X, Users, Link2, GitBranch, Bot, Maximize2, Minimize2, ExternalLink } from "lucide-react";
 import { Header } from "../../components/layout/header";
 import { Badge } from "../../components/ui/badge";
 import { Loading } from "../../components/ui/loading";
@@ -61,6 +61,7 @@ function generateNetworkAnalysis(data: TransmissionNetwork): { title: string; fi
 }
 
 function TransmissionPage() {
+  const navigate = useNavigate();
   const [organism, setOrganism] = useState("MRSA");
   const [selectedNode, setSelectedNode] = useState<TransmissionNode | null>(null);
   const [graphExpanded, setGraphExpanded] = useState(false);
@@ -142,6 +143,14 @@ function TransmissionPage() {
                         <DetailRow label="Node Type" value={selectedNode.nodeType} />
                       </div>
 
+                      <button
+                        onClick={() => navigate({ to: "/app/patients", search: { patientId: selectedNode.id } })}
+                        className="mt-3 flex w-full items-center justify-center gap-1.5 rounded-lg border border-neutral-200 bg-neutral-50 px-3 py-1.5 text-[11px] font-medium text-neutral-700 transition-colors hover:bg-neutral-100"
+                      >
+                        <ExternalLink className="h-3 w-3" />
+                        View Patient Profile
+                      </button>
+
                       <div className="mt-5 border-t border-neutral-200 pt-4">
                         <p className="mb-3 text-[10px] font-semibold tracking-wide text-neutral-400 uppercase">Connections</p>
                         <div className="space-y-2.5">
@@ -155,7 +164,12 @@ function TransmissionPage() {
                                 <div key={i} className="rounded-lg bg-neutral-50 p-3">
                                   <div className="flex items-center gap-2">
                                     <span className="text-xs text-neutral-400">{direction}</span>
-                                    <span className="text-xs font-medium text-neutral-900">{other?.patientName ?? otherId}</span>
+                                    <button
+                                      className="text-xs font-medium text-sky-600 hover:underline"
+                                      onClick={() => navigate({ to: "/app/patients", search: { patientId: otherId } })}
+                                    >
+                                      {other?.patientName ?? otherId}
+                                    </button>
                                   </div>
                                   <div className="mt-1.5 flex items-center gap-2">
                                     <Badge className="text-[10px]">{link.linkType}</Badge>

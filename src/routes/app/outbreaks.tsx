@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import {
   AlertTriangle, CheckCircle2, Clock, Search, Plus,
   FileText, Download, Bot, BarChart3, X,
@@ -180,6 +180,7 @@ function generateAiAnalysis(outbreak: Outbreak): string[] {
 }
 
 function OutbreaksPage() {
+  const navigate = useNavigate();
   const outbreaks = useAsync(() => api.outbreaks.getAll(), []);
   const patients = useAsync(() => api.patients.getAll(), []);
   const transmission = useAsync(() => api.transmission.getNetwork(), []);
@@ -306,6 +307,7 @@ function OutbreaksPage() {
             <GanttChart
               patients={clusterPatients}
               title={`Cluster ${selectedCluster.affectedPatients} (${selectedCluster.affectedPatients} patients)`}
+              onPatientClick={(id) => navigate({ to: "/app/patients", search: { patientId: id } })}
             />
 
             {/* AI-generated outbreak analysis */}

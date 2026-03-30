@@ -83,7 +83,7 @@ export function AiChatPanel() {
       <button
         onClick={() => setOpen(!open)}
         className={cn(
-          "fixed bottom-6 right-6 z-50 flex h-12 w-12 items-center justify-center rounded-full shadow-lg transition-all hover:scale-105",
+          "fixed bottom-6 right-20 z-50 flex h-12 w-12 items-center justify-center rounded-full shadow-lg transition-all hover:scale-105",
           open
             ? "bg-neutral-200 text-neutral-700"
             : "bg-sky-600 text-white hover:bg-sky-700",
@@ -93,7 +93,7 @@ export function AiChatPanel() {
       </button>
 
       {open && (
-        <div className="fixed bottom-20 right-6 z-50 flex h-[540px] w-[400px] flex-col rounded-2xl border border-neutral-200 bg-white shadow-2xl">
+        <div className="fixed bottom-20 right-20 z-50 flex h-[540px] w-[400px] flex-col rounded-2xl border border-neutral-200 bg-white shadow-2xl">
           <div className="flex items-center gap-3 border-b border-neutral-200 px-4 py-3">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-sky-50">
               <Sparkles className="h-4 w-4 text-sky-600" />

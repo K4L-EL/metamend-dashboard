@@ -1,6 +1,6 @@
 import { useState, useRef, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
-import { Html, RoundedBox } from "@react-three/drei";
+import { RoundedBox } from "@react-three/drei";
 import type { Mesh } from "three";
 import { Color, MathUtils } from "three";
 import type { Patient } from "../../types";
@@ -32,15 +32,7 @@ function getIndicatorColor(patient: Patient | null): Color {
   return STATUS_GREEN;
 }
 
-function getStatusLabel(patient: Patient | null): string {
-  if (!patient) return "Empty";
-  if (patient.activeInfections > 0) return "Infected";
-  if (patient.riskScore > 0.6) return "At Risk";
-  if (patient.status === "Monitoring") return "Monitoring";
-  return "Stable";
-}
-
-export function Bed({ position, patient, bedId, onSelect }: BedProps) {
+export function Bed({ position, patient, onSelect }: BedProps) {
   const theme = useMapTheme();
   const light = theme === "light";
   const groupRef = useRef<Mesh>(null);
@@ -53,7 +45,6 @@ export function Bed({ position, patient, bedId, onSelect }: BedProps) {
 
   const frameColor = useMemo(() => new Color(light ? "#a3a3a3" : "#171717"), [light]);
   const pillowColor = useMemo(() => new Color(light ? "#737373" : "#404040"), [light]);
-  const emptyBedColor = useMemo(() => new Color(light ? "#d4d4d4" : "#262626"), [light]);
 
   useFrame(({ clock }, delta) => {
     if (!groupRef.current) return;
@@ -98,9 +89,9 @@ export function Bed({ position, patient, bedId, onSelect }: BedProps) {
       <group
         ref={groupRef}
         position={position}
-        onPointerOver={(e) => { e.stopPropagation(); setHovered(true); document.body.style.cursor = patient ? "pointer" : "default"; }}
+        onPointerOver={(e) => { e.stopPropagation(); setHovered(true); document.body.style.cursor = patient ? "pointer" : "default"; if (patient && onSelect) onSelect(patient); }}
         onPointerOut={() => { setHovered(false); document.body.style.cursor = "default"; }}
-        onClick={(e) => { e.stopPropagation(); if (patient && onSelect) { setHovered(false); onSelect(patient); } }}
+        onClick={(e) => { e.stopPropagation(); if (patient && onSelect) onSelect(patient); }}
       >
         {/* Frame */}
         <RoundedBox args={[0.38, 0.06, 0.7]} radius={0.02} smoothness={4} position={[0, 0, 0]} castShadow receiveShadow>
@@ -129,47 +120,7 @@ export function Bed({ position, patient, bedId, onSelect }: BedProps) {
         </RoundedBox>
       </group>
 
-      {hovered && (
-        <Html position={[position[0], position[1] + 0.5, position[2]]} center distanceFactor={8} style={{ pointerEvents: "none" }}>
-          <div className={`w-44 rounded-lg border px-3 py-2.5 shadow-xl ${
-            light ? "border-neutral-300 bg-white" : "border-neutral-700 bg-neutral-900"
-          }`}>
-            <div className="flex items-center justify-between">
-              <span className={`text-[10px] font-medium ${light ? "text-neutral-500" : "text-neutral-400"}`}>Bed {bedId}</span>
-              <span className={`text-[10px] font-semibold ${light ? "text-neutral-700" : "text-neutral-300"}`}>
-                {getStatusLabel(patient)}
-              </span>
-            </div>
-            {patient ? (
-              <div className="mt-1.5">
-                <p className={`text-xs font-semibold ${light ? "text-neutral-900" : "text-white"}`}>{patient.name}</p>
-                <p className={`text-[10px] ${light ? "text-neutral-500" : "text-neutral-400"}`}>{patient.age}y · {patient.gender}</p>
-                <div className="mt-1.5 flex items-center gap-2">
-                  <div className="flex-1">
-                    <div className={`h-1 overflow-hidden rounded-full ${light ? "bg-neutral-200" : "bg-neutral-700"}`}>
-                      <div className={`h-full rounded-full ${light ? "bg-neutral-500" : "bg-neutral-400"}`} style={{ width: `${patient.riskScore * 100}%` }} />
-                    </div>
-                  </div>
-                  <span className={`text-[10px] tabular-nums ${light ? "text-neutral-500" : "text-neutral-400"}`}>
-                    {(patient.riskScore * 100).toFixed(0)}%
-                  </span>
-                </div>
-                {patient.organisms.length > 0 && (
-                  <div className="mt-1 flex flex-wrap gap-1">
-                    {patient.organisms.map((org) => (
-                      <span key={org} className={`rounded px-1 py-0.5 text-[8px] ${light ? "bg-neutral-200 text-neutral-600" : "bg-neutral-700 text-neutral-300"}`}>
-                        {org}
-                      </span>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ) : (
-              <p className={`mt-1 text-[10px] ${light ? "text-neutral-400" : "text-neutral-500"}`}>Unoccupied</p>
-            )}
-          </div>
-        </Html>
-      )}
+      {/* 3D tooltip removed — detail shown in BedPanel on hover */}
     </group>
   );
 }

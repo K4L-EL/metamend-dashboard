@@ -4,7 +4,7 @@ import { OrbitControls } from "@react-three/drei";
 import {
   Layers, Columns2, Sun, Moon, Home, ZoomIn, ZoomOut,
   ChevronDown, ChevronRight, Building2,
-  ArrowUp, ArrowDown, ArrowLeft, ArrowRight, RotateCcw,
+  ArrowUp, ArrowDown, ArrowLeft, ArrowRight,
 } from "lucide-react";
 import { Vector3, MOUSE } from "three";
 import type { LocationRisk, Patient } from "../../types";
@@ -391,8 +391,8 @@ export function HospitalScene({ locations, patients }: HospitalSceneProps) {
             <button onClick={() => handlePan(-1, 0)} className={`flex h-7 w-7 items-center justify-center rounded-md border text-[10px] shadow-md backdrop-blur-sm transition-colors ${btnClass}`} title="Pan left">
               <ArrowLeft className="h-3 w-3" strokeWidth={2.5} />
             </button>
-            <button onClick={handleReset} className={`flex h-7 w-7 items-center justify-center rounded-md border text-[10px] shadow-md backdrop-blur-sm transition-colors ${btnClass}`} title="Reset view">
-              <RotateCcw className="h-3 w-3" strokeWidth={2.5} />
+            <button onClick={handleReset} className={`flex h-7 w-7 items-center justify-center rounded-md border text-[10px] shadow-md backdrop-blur-sm transition-colors ${btnClass}`} title="Home view">
+              <Home className="h-3 w-3" strokeWidth={2.5} />
             </button>
             <button onClick={() => handlePan(1, 0)} className={`flex h-7 w-7 items-center justify-center rounded-md border text-[10px] shadow-md backdrop-blur-sm transition-colors ${btnClass}`} title="Pan right">
               <ArrowRight className="h-3 w-3" strokeWidth={2.5} />
