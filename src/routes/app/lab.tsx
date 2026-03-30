@@ -159,9 +159,9 @@ function LabPage() {
     <div>
       <Header title="MetaMed Lab" subtitle="How the intelligence platform works — methodology and technical details" />
       <div className="space-y-4 p-4 sm:space-y-6 sm:p-8">
-        <div className="rounded-xl border border-teal-200 bg-teal-50/50 p-5">
+        <div className="rounded-xl border border-sky-200 bg-sky-50/50 p-5">
           <div className="flex items-start gap-3">
-            <Sparkles className="mt-0.5 h-5 w-5 text-teal-600" strokeWidth={1.8} />
+            <Sparkles className="mt-0.5 h-5 w-5 text-sky-600" strokeWidth={1.8} />
             <div>
               <h3 className="text-[14px] font-semibold text-neutral-900">Understanding MetaMed</h3>
               <p className="mt-1 text-[13px] leading-relaxed text-neutral-600">
@@ -181,7 +181,7 @@ function LabPage() {
                 key={idx}
                 className={cn(
                   "cursor-pointer transition-all",
-                  isOpen && "ring-1 ring-teal-200 shadow-md",
+                  isOpen && "ring-1 ring-sky-200 shadow-md",
                 )}
                 onClick={() => setExpandedIdx(isOpen ? null : idx)}
               >
@@ -209,7 +209,7 @@ function LabPage() {
                         <ul className="mt-2 space-y-2">
                           {feature.details.map((d, i) => (
                             <li key={i} className="flex items-start gap-2">
-                              <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-teal-400" />
+                              <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-sky-400" />
                               <span className="text-[13px] leading-relaxed text-neutral-600">{d}</span>
                             </li>
                           ))}

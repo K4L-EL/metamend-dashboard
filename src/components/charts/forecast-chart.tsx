@@ -19,8 +19,8 @@ interface ForecastChartProps {
 const COLORS = {
   grid: "#e5e5e5",
   tick: "#737373",
-  fill: "rgba(13, 148, 136, 0.06)",
-  predicted: "#0d9488",
+  fill: "rgba(14, 165, 233, 0.06)",
+  predicted: "#0ea5e9",
   actual: "#737373",
 };
 

@@ -40,8 +40,8 @@ export function AdmissionTrendChart({
           <AreaChart data={chartData}>
             <defs>
               <linearGradient id="admissionGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#0d9488" stopOpacity={0.15} />
-                <stop offset="95%" stopColor="#0d9488" stopOpacity={0} />
+                <stop offset="5%" stopColor="#0ea5e9" stopOpacity={0.15} />
+                <stop offset="95%" stopColor="#0ea5e9" stopOpacity={0} />
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="3 3" stroke="#e5e5e5" vertical={false} />
@@ -71,10 +71,10 @@ export function AdmissionTrendChart({
             <Area
               type="monotone"
               dataKey="admissions"
-              stroke="#0d9488"
+              stroke="#0ea5e9"
               strokeWidth={2}
               fill="url(#admissionGradient)"
-              dot={{ r: 3, fill: "#0d9488", strokeWidth: 0 }}
+              dot={{ r: 3, fill: "#0ea5e9", strokeWidth: 0 }}
             />
           </AreaChart>
         </ResponsiveContainer>

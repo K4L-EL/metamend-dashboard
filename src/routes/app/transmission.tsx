@@ -18,18 +18,18 @@ export const Route = createFileRoute("/app/transmission")({
 
 const NODE_COLORS: Record<string, string> = {
   Index: "bg-red-500",
-  Secondary: "bg-amber-500",
-  Environmental: "bg-teal-500",
+  Secondary: "bg-neutral-500",
+  Environmental: "bg-sky-500",
   HCW: "bg-blue-400",
   "Suspected Source": "bg-purple-400",
 };
 
 const LINK_COLORS: Record<string, string> = {
   "Direct Contact": "bg-red-500",
-  "Shared Equipment": "bg-amber-500",
-  "Ward Proximity": "bg-teal-500",
+  "Shared Equipment": "bg-neutral-500",
+  "Ward Proximity": "bg-sky-500",
   "Temporal Link": "bg-blue-400",
-  "Environmental": "bg-green-400",
+  "Environmental": "bg-neutral-400",
 };
 
 function TransmissionPage() {

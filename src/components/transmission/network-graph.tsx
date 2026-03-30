@@ -22,18 +22,18 @@ interface NetworkGraphProps {
 
 const NODE_STYLES: Record<string, { bg: string; border: string; ring: string; text: string }> = {
   Index: { bg: "#fef2f2", border: "#dc2626", ring: "#dc2626", text: "#991b1b" },
-  Secondary: { bg: "#fffbeb", border: "#d97706", ring: "#d97706", text: "#92400e" },
-  Environmental: { bg: "#f0fdfa", border: "#0d9488", ring: "#0d9488", text: "#134e4a" },
+  Secondary: { bg: "#f5f5f5", border: "#737373", ring: "#737373", text: "#525252" },
+  Environmental: { bg: "#f0f9ff", border: "#0ea5e9", ring: "#0ea5e9", text: "#404040" },
   HCW: { bg: "#eff6ff", border: "#3b82f6", ring: "#3b82f6", text: "#1e40af" },
   "Suspected Source": { bg: "#faf5ff", border: "#a855f7", ring: "#a855f7", text: "#6b21a8" },
 };
 
 const LINK_COLORS: Record<string, string> = {
   "Direct Contact": "#dc2626",
-  "Shared Equipment": "#d97706",
-  "Ward Proximity": "#0d9488",
+  "Shared Equipment": "#737373",
+  "Ward Proximity": "#0ea5e9",
   "Temporal Link": "#3b82f6",
-  "Environmental": "#16a34a",
+  "Environmental": "#a3a3a3",
 };
 
 function radialLayout(nodes: TransmissionNode[], links: TransmissionLink[]): Map<string, { x: number; y: number }> {

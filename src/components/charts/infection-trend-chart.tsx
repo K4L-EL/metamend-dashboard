@@ -21,8 +21,8 @@ const COLORS = {
   tick: "#737373",
   hai: "#dc2626",
   haiFill: "rgba(220, 38, 38, 0.08)",
-  community: "#0d9488",
-  communityFill: "rgba(13, 148, 136, 0.06)",
+  community: "#0ea5e9",
+  communityFill: "rgba(14, 165, 233, 0.06)",
 };
 
 export function InfectionTrendChart({

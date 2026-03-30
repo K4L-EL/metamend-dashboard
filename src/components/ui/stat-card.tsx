@@ -17,9 +17,9 @@ interface StatCardProps {
 
 const ACCENT_MAP = {
   metamed: {
-    icon: "bg-teal-50 text-teal-600 group-hover:bg-teal-100",
-    trend: "text-teal-700",
-    bar: "bg-teal-500",
+    icon: "bg-sky-50 text-sky-600 group-hover:bg-sky-100",
+    trend: "text-sky-700",
+    bar: "bg-sky-500",
   },
   danger: {
     icon: "bg-red-50 text-red-600 group-hover:bg-red-100",
@@ -27,14 +27,14 @@ const ACCENT_MAP = {
     bar: "bg-red-500",
   },
   warning: {
-    icon: "bg-amber-50 text-amber-600 group-hover:bg-amber-100",
-    trend: "text-amber-700",
-    bar: "bg-amber-500",
+    icon: "bg-neutral-100 text-neutral-600 group-hover:bg-neutral-200",
+    trend: "text-neutral-700",
+    bar: "bg-neutral-500",
   },
   success: {
-    icon: "bg-green-50 text-green-600 group-hover:bg-green-100",
-    trend: "text-green-700",
-    bar: "bg-green-500",
+    icon: "bg-neutral-100 text-neutral-500 group-hover:bg-neutral-200",
+    trend: "text-neutral-600",
+    bar: "bg-neutral-400",
   },
 };
 

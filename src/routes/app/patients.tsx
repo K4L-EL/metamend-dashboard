@@ -34,8 +34,8 @@ function RiskIndicator({ score }: { score: number }) {
   const pct = score * 100;
   const color =
     score > 0.75 ? "bg-red-500"
-    : score > 0.5 ? "bg-amber-500"
-    : score > 0.25 ? "bg-teal-500"
+    : score > 0.5 ? "bg-neutral-500"
+    : score > 0.25 ? "bg-sky-500"
     : "bg-neutral-400";
 
   return (
@@ -156,7 +156,7 @@ function PatientsPage() {
                         key={patient.id}
                         className={cn(
                           "cursor-pointer transition-colors",
-                          selectedPatient?.id === patient.id && "bg-teal-50/50",
+                          selectedPatient?.id === patient.id && "bg-sky-50/50",
                         )}
                         onClick={() => { setSelectedPatient(patient); setActiveTab("overview"); }}
                       >
@@ -208,7 +208,7 @@ function PatientsPage() {
                   className={cn(
                     "flex items-center gap-1.5 px-4 py-2.5 text-[12px] font-medium transition-colors",
                     activeTab === id
-                      ? "border-b-2 border-teal-500 text-teal-700"
+                      ? "border-b-2 border-sky-500 text-sky-700"
                       : "text-neutral-500 hover:text-neutral-700",
                   )}
                 >
@@ -229,7 +229,7 @@ function PatientsPage() {
                   <DetailSection title="Location">
                     <button
                       onClick={() => navigate({ to: "/app/hospital-map", search: { ward: selectedPatient.ward } })}
-                      className="flex items-center gap-2 text-[13px] text-teal-700 hover:underline"
+                      className="flex items-center gap-2 text-[13px] text-sky-700 hover:underline"
                     >
                       <MapPin className="h-3.5 w-3.5" />
                       {selectedPatient.ward} — Bed {selectedPatient.bedNumber}

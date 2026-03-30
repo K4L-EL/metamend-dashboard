@@ -26,8 +26,8 @@ const CATEGORIES = ["Infection", "Outbreak", "Risk", "Compliance"];
 const CATEGORY_CONFIG: Record<string, { icon: typeof Activity; color: string; bg: string }> = {
   infection: { icon: Activity, color: "text-red-500", bg: "bg-red-50" },
   outbreak: { icon: AlertTriangle, color: "text-red-600", bg: "bg-red-50" },
-  risk: { icon: Shield, color: "text-amber-500", bg: "bg-amber-50" },
-  compliance: { icon: ClipboardCheck, color: "text-teal-600", bg: "bg-teal-50" },
+  risk: { icon: Shield, color: "text-neutral-500", bg: "bg-neutral-100" },
+  compliance: { icon: ClipboardCheck, color: "text-sky-600", bg: "bg-sky-50" },
 };
 
 const EMPTY_FORM: CreateAlertRequest = {
@@ -119,7 +119,7 @@ function AlertsPage() {
                 className={cn(
                   "flex items-center gap-3 rounded-xl border p-4 text-left transition-all",
                   isActive
-                    ? "border-teal-300 bg-teal-50 shadow-sm"
+                    ? "border-sky-300 bg-sky-50 shadow-sm"
                     : "border-neutral-200 bg-white hover:border-neutral-300 hover:shadow-sm",
                 )}
               >
@@ -153,7 +153,7 @@ function AlertsPage() {
             className={cn(
               "flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-[12px] transition-colors",
               showArchived
-                ? "border-teal-300 bg-teal-50 text-teal-700"
+                ? "border-sky-300 bg-sky-50 text-sky-700"
                 : "border-neutral-200 bg-white text-neutral-600 hover:border-neutral-300",
             )}
           >
@@ -248,7 +248,7 @@ function AlertRow({
   const Icon = cfg?.icon ?? Bell;
 
   return (
-    <Card className={cn("transition-all", !alert.isRead && !showArchived && "border-l-[3px] border-l-teal-500")}>
+    <Card className={cn("transition-all", !alert.isRead && !showArchived && "border-l-[3px] border-l-sky-500")}>
       <CardContent className="p-0">
         <div className="flex items-start gap-4 p-4">
           {!showArchived && (
@@ -257,7 +257,7 @@ function AlertRow({
               className={cn(
                 "mt-1 flex h-4 w-4 shrink-0 items-center justify-center rounded border transition-colors",
                 selected
-                  ? "border-teal-500 bg-teal-500 text-white"
+                  ? "border-sky-500 bg-sky-500 text-white"
                   : "border-neutral-300 hover:border-neutral-400",
               )}
             >
@@ -271,7 +271,7 @@ function AlertRow({
             <div className="flex items-center gap-2">
               <h3 className="text-[13px] font-medium text-neutral-900">{alert.title}</h3>
               <Badge variant={severityColor(alert.severity)}>{alert.severity}</Badge>
-              {!alert.isRead && !showArchived && <span className="h-1.5 w-1.5 rounded-full bg-teal-500" />}
+              {!alert.isRead && !showArchived && <span className="h-1.5 w-1.5 rounded-full bg-sky-500" />}
             </div>
             <p className="mt-1 text-[12px] leading-relaxed text-neutral-500">{alert.description}</p>
             <div className="mt-2 flex items-center gap-3">
@@ -292,13 +292,13 @@ function AlertRow({
             </div>
             {alert.relatedEntityType && (
               <p className="mt-3 text-[12px] text-neutral-500">
-                Related: <span className="font-medium text-teal-700">{alert.relatedEntityType}</span>
+                Related: <span className="font-medium text-sky-700">{alert.relatedEntityType}</span>
                 {alert.relatedEntityId && ` (${alert.relatedEntityId})`}
               </p>
             )}
             <button
               onClick={() => onViewMap(alert.title.split(" in ").pop() ?? "ICU-A")}
-              className="mt-3 inline-flex items-center gap-1.5 rounded-lg border border-teal-200 bg-teal-50 px-3 py-1.5 text-[11px] font-medium text-teal-700 transition-colors hover:bg-teal-100"
+              className="mt-3 inline-flex items-center gap-1.5 rounded-lg border border-sky-200 bg-sky-50 px-3 py-1.5 text-[11px] font-medium text-sky-700 transition-colors hover:bg-sky-100"
             >
               <MapPin className="h-3 w-3" /> View on Location Risk Map
             </button>

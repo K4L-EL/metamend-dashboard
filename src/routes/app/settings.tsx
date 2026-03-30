@@ -71,8 +71,8 @@ function SettingsPage() {
           <Card key={title}>
             <CardHeader>
               <div className="flex items-center gap-3">
-                <div className="rounded-lg bg-teal-50 p-2">
-                  <Icon className="h-4 w-4 text-teal-600" strokeWidth={1.8} />
+                <div className="rounded-lg bg-sky-50 p-2">
+                  <Icon className="h-4 w-4 text-sky-600" strokeWidth={1.8} />
                 </div>
                 <div>
                   <CardTitle>{title}</CardTitle>
@@ -84,7 +84,7 @@ function SettingsPage() {
               {items.map((item) => (
                 <div key={item.label} className="flex items-center justify-between rounded-lg border border-neutral-100 px-4 py-3">
                   <span className="text-[13px] text-neutral-700">{item.label}</span>
-                  <div className={`h-5 w-9 rounded-full transition-colors ${item.enabled ? "bg-teal-500" : "bg-neutral-300"}`}>
+                  <div className={`h-5 w-9 rounded-full transition-colors ${item.enabled ? "bg-sky-500" : "bg-neutral-300"}`}>
                     <div
                       className={`h-5 w-5 transform rounded-full bg-white shadow-sm transition-transform ${item.enabled ? "translate-x-4" : "translate-x-0"}`}
                     />

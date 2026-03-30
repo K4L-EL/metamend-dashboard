@@ -21,7 +21,7 @@ function trendIcon(trend: string) {
     case "increasing":
       return <TrendingUp className="h-3.5 w-3.5 text-red-500" strokeWidth={2} />;
     case "decreasing":
-      return <TrendingDown className="h-3.5 w-3.5 text-green-500" strokeWidth={2} />;
+      return <TrendingDown className="h-3.5 w-3.5 text-neutral-500" strokeWidth={2} />;
     default:
       return <Minus className="h-3.5 w-3.5 text-neutral-300" strokeWidth={2} />;
   }
@@ -29,8 +29,8 @@ function trendIcon(trend: string) {
 
 function rateShade(rate: number): string {
   if (rate > 0.5) return "bg-red-500";
-  if (rate > 0.25) return "bg-amber-500";
-  if (rate > 0.1) return "bg-teal-500";
+  if (rate > 0.25) return "bg-neutral-500";
+  if (rate > 0.1) return "bg-sky-500";
   return "bg-neutral-400";
 }
 
@@ -188,14 +188,14 @@ function ResistancePage() {
                           <div className="space-y-1.5">
                             {patient.reasons.map((reason, i) => (
                               <div key={i} className="flex items-start gap-2">
-                                <span className="mt-1 h-1 w-1 shrink-0 rounded-full bg-amber-400" />
+                                <span className="mt-1 h-1 w-1 shrink-0 rounded-full bg-neutral-400" />
                                 <p className="text-[12px] leading-relaxed text-neutral-600">{reason}</p>
                               </div>
                             ))}
                           </div>
-                          <div className="flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2">
-                            <AlertTriangle className="h-3.5 w-3.5 shrink-0 text-amber-600" />
-                            <p className="text-[12px] font-medium text-amber-800">{patient.action}</p>
+                          <div className="flex items-center gap-2 rounded-lg border border-neutral-300 bg-neutral-100 px-3 py-2">
+                            <AlertTriangle className="h-3.5 w-3.5 shrink-0 text-neutral-600" />
+                            <p className="text-[12px] font-medium text-neutral-700">{patient.action}</p>
                           </div>
                         </div>
                       )}
@@ -230,7 +230,7 @@ function ResistancePage() {
                     return (
                       <Card
                         key={summary.organism}
-                        className={cn("cursor-pointer transition-all", isOpen && "ring-1 ring-teal-200")}
+                        className={cn("cursor-pointer transition-all", isOpen && "ring-1 ring-sky-200")}
                         onClick={() => toggleOrganism(summary.organism)}
                       >
                         <CardHeader>

@@ -58,8 +58,8 @@ function SurveillancePage() {
       <div className="space-y-4 p-4 sm:space-y-6 sm:p-8">
         <div className="grid gap-4 sm:grid-cols-3">
           <MetricCard label="Total Active" value={infections.data?.filter((i) => i.status === "Active").length ?? 0} accent="bg-red-500" />
-          <MetricCard label="HAI Cases" value={infections.data?.filter((i) => i.isHai).length ?? 0} accent="bg-amber-500" />
-          <MetricCard label="Under Monitoring" value={infections.data?.filter((i) => i.status === "Monitoring").length ?? 0} accent="bg-teal-500" />
+          <MetricCard label="HAI Cases" value={infections.data?.filter((i) => i.isHai).length ?? 0} accent="bg-neutral-500" />
+          <MetricCard label="Under Monitoring" value={infections.data?.filter((i) => i.status === "Monitoring").length ?? 0} accent="bg-sky-500" />
         </div>
 
         <Card>

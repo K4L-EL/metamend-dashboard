@@ -4,16 +4,16 @@ import { cn } from "../../lib/utils";
 const VARIANTS: Record<string, string> = {
   default: "bg-neutral-100 text-neutral-600",
   critical: "bg-red-50 text-red-700 border border-red-200",
-  high: "bg-amber-50 text-amber-700 border border-amber-200",
-  medium: "bg-teal-50 text-teal-700 border border-teal-200",
+  high: "bg-neutral-100 text-neutral-700 border border-neutral-300",
+  medium: "bg-sky-50 text-sky-700 border border-sky-200",
   low: "bg-neutral-100 text-neutral-600 border border-neutral-200",
-  success: "bg-green-50 text-green-700 border border-green-200",
-  info: "bg-teal-50 text-teal-700 border border-teal-200",
-  metamed: "bg-teal-50 text-teal-700 border border-teal-200",
+  success: "bg-neutral-100 text-neutral-600 border border-neutral-200",
+  info: "bg-sky-50 text-sky-700 border border-sky-200",
+  metamed: "bg-sky-50 text-sky-700 border border-sky-200",
   outbreak: "bg-red-50 text-red-700 border border-red-200",
-  monitoring: "bg-amber-50 text-amber-700 border border-amber-200",
-  resolved: "bg-green-50 text-green-700 border border-green-200",
-  new: "bg-teal-50 text-teal-700 border border-teal-200",
+  monitoring: "bg-neutral-100 text-neutral-600 border border-neutral-200",
+  resolved: "bg-neutral-100 text-neutral-600 border border-neutral-200",
+  new: "bg-sky-50 text-sky-700 border border-sky-200",
 };
 
 interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {

@@ -43,8 +43,8 @@ function MiniTrendChart({ color }: { color: string }) {
 const FEED_ICONS: Record<string, string> = {
   infection: "bg-red-50 text-red-500",
   outbreak: "bg-red-50 text-red-600",
-  risk: "bg-amber-50 text-amber-500",
-  compliance: "bg-teal-50 text-teal-600",
+  risk: "bg-neutral-100 text-neutral-500",
+  compliance: "bg-sky-50 text-sky-600",
 };
 
 function DashboardPage() {
@@ -89,7 +89,7 @@ function DashboardPage() {
             accent="warning"
             onClick={() => toggle("risk")}
             expanded={expandedCard === "risk"}
-            expandedContent={<MiniTrendChart color="#d97706" />}
+            expandedContent={<MiniTrendChart color="#737373" />}
             subtitle={`Avg risk score: ${s?.riskScoreAverage ?? 0}`}
           />
           <StatCard
@@ -108,7 +108,7 @@ function DashboardPage() {
             accent="metamed"
             onClick={() => toggle("alerts")}
             expanded={expandedCard === "alerts"}
-            expandedContent={<MiniTrendChart color="#0d9488" />}
+            expandedContent={<MiniTrendChart color="#0ea5e9" />}
           />
         </div>
 
@@ -131,7 +131,7 @@ function DashboardPage() {
         <Card>
           <CardHeader>
             <div className="flex items-center gap-2">
-              <TrendUp className="h-4 w-4 text-teal-600" />
+              <TrendUp className="h-4 w-4 text-sky-600" />
               <CardTitle>Activity Feed</CardTitle>
             </div>
             <span className="text-[11px] text-neutral-400">
@@ -173,7 +173,7 @@ function DashboardPage() {
                           {formatDateTime(alert.createdAt)}
                         </p>
                         <ArrowRight className="h-3 w-3 text-neutral-300" />
-                        <span className="text-[10px] text-teal-600">{alert.category}</span>
+                        <span className="text-[10px] text-sky-600">{alert.category}</span>
                       </div>
                     </div>
                   </div>

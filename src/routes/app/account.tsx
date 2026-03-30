@@ -17,7 +17,7 @@ function AccountPage() {
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center gap-5">
-              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-teal-100 text-xl font-bold text-teal-700">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-sky-100 text-xl font-bold text-sky-700">
                 KM
               </div>
               <div>

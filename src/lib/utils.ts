@@ -29,8 +29,8 @@ export function formatPercent(value: number): string {
 
 export function riskColor(score: number): string {
   if (score > 0.75) return "bg-red-600 text-white shadow-sm";
-  if (score > 0.5) return "bg-amber-500 text-white shadow-sm";
-  if (score > 0.25) return "bg-teal-500 text-white shadow-sm";
+  if (score > 0.5) return "bg-neutral-500 text-white shadow-sm";
+  if (score > 0.25) return "bg-sky-500 text-white shadow-sm";
   return "bg-neutral-300 text-neutral-800 shadow-sm";
 }
 

@@ -116,7 +116,7 @@ function ForecastingPage() {
                             <div
                               className={cn(
                                 "h-full rounded-full",
-                                score.score > 0.75 ? "bg-red-500" : "bg-amber-500",
+                                score.score > 0.75 ? "bg-red-500" : "bg-neutral-500",
                               )}
                               style={{ width: `${score.score * 100}%` }}
                             />

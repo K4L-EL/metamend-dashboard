@@ -1,7 +1,7 @@
 const LEGEND_ITEMS = [
   { label: "Infected", dotColor: "#dc2626" },
-  { label: "At Risk", dotColor: "#ca8a04" },
-  { label: "Stable", dotColor: "#16a34a" },
+  { label: "At Risk", dotColor: "#a3a3a3" },
+  { label: "Stable", dotColor: "#a3a3a3" },
   { label: "Empty", dotColor: "#404040" },
 ] as const;
 

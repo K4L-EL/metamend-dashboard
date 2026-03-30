@@ -14,15 +14,15 @@ interface BedProps {
 }
 
 const STATUS_RED = new Color("#dc2626");
-const STATUS_YELLOW = new Color("#ca8a04");
-const STATUS_GREEN = new Color("#16a34a");
+const STATUS_YELLOW = new Color("#a3a3a3");
+const STATUS_GREEN = new Color("#a3a3a3");
 const STATUS_EMPTY_INDICATOR = new Color("#404040");
 
 function getBedColor(patient: Patient | null, light: boolean): Color {
   if (!patient) return new Color(light ? "#d4d4d4" : "#262626");
   if (patient.activeInfections > 0) return new Color(light ? "#fecaca" : "#2a1a1a");
-  if (patient.riskScore > 0.6) return new Color(light ? "#fef9c3" : "#2a2a1a");
-  return new Color(light ? "#dcfce7" : "#1a2a1a");
+  if (patient.riskScore > 0.6) return new Color(light ? "#e5e5e5" : "#1f1f1f");
+  return new Color(light ? "#e5e5e5" : "#1a1a1a");
 }
 
 function getIndicatorColor(patient: Patient | null): Color {

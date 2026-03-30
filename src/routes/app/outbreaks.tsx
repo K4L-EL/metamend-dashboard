@@ -32,8 +32,8 @@ function statusIcon(status: string) {
   const props = { strokeWidth: 1.8 } as const;
   switch (status.toLowerCase()) {
     case "active": return <AlertTriangle {...props} className="h-4 w-4 text-red-500" />;
-    case "suspected": return <Search {...props} className="h-4 w-4 text-amber-500" />;
-    case "resolved": return <CheckCircle2 {...props} className="h-4 w-4 text-green-500" />;
+    case "suspected": return <Search {...props} className="h-4 w-4 text-neutral-500" />;
+    case "resolved": return <CheckCircle2 {...props} className="h-4 w-4 text-neutral-500" />;
     default: return <Clock {...props} className="h-4 w-4 text-neutral-400" />;
   }
 }
@@ -174,8 +174,8 @@ function OutbreaksPage() {
         <div className="flex items-center justify-between">
           <div className="grid flex-1 gap-4 sm:grid-cols-3">
             <MetricCard label="Active" value={outbreaks.data?.filter((o) => o.status === "Active").length ?? 0} shade="bg-red-500" />
-            <MetricCard label="Under Investigation" value={outbreaks.data?.filter((o) => o.status === "Suspected").length ?? 0} shade="bg-amber-500" />
-            <MetricCard label="Resolved (30d)" value={outbreaks.data?.filter((o) => o.status === "Resolved").length ?? 0} shade="bg-green-500" />
+            <MetricCard label="Under Investigation" value={outbreaks.data?.filter((o) => o.status === "Suspected").length ?? 0} shade="bg-neutral-500" />
+            <MetricCard label="Resolved (30d)" value={outbreaks.data?.filter((o) => o.status === "Resolved").length ?? 0} shade="bg-neutral-500" />
           </div>
         </div>
 
