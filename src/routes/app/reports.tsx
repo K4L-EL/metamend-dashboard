@@ -339,16 +339,34 @@ function SectionWrapper({
   );
 }
 
+/* ---------- Markdown Renderer ---------- */
+
+function Prose({ text }: { text: string }) {
+  const html = text
+    .replace(/#### (.+)/g, '<h4 class="mt-4 mb-1 text-xs font-bold text-neutral-800 uppercase tracking-wider">$1</h4>')
+    .replace(/### (.+)/g, '<h3 class="mt-4 mb-1 text-sm font-bold text-neutral-900">$1</h3>')
+    .replace(/## (.+)/g, '<h3 class="mt-4 mb-1 text-sm font-bold text-neutral-900">$1</h3>')
+    .replace(/\*\*(.+?)\*\*/g, '<strong class="font-semibold text-neutral-900">$1</strong>')
+    .replace(/^(\d+)\.\s/gm, '<span class="font-semibold text-sky-700">$1.</span> ')
+    .replace(/^- (.+)$/gm, '<li class="ml-4 list-disc">$1</li>')
+    .replace(/(<li[^>]*>.*<\/li>\n?)+/g, (match) => `<ul class="my-1 space-y-0.5">${match}</ul>`)
+    .replace(/\n{2,}/g, '</p><p class="mt-2">')
+    .replace(/\n/g, '<br/>');
+
+  return (
+    <div
+      className="prose-sm text-sm leading-relaxed text-neutral-700 [&_strong]:text-neutral-900 [&_h3]:text-neutral-900 [&_h4]:text-neutral-600 [&_ul]:list-disc [&_ul]:ml-4 [&_li]:text-neutral-700"
+      dangerouslySetInnerHTML={{ __html: html }}
+    />
+  );
+}
+
 /* ---------- Executive Summary Block ---------- */
 
 function ExecutiveSummaryBlock({ data }: { data: ReportExecutiveSummary }) {
   return (
     <div className="space-y-6">
-      {data.narrative && (
-        <p className="text-sm leading-relaxed text-neutral-700">
-          {data.narrative}
-        </p>
-      )}
+      {data.narrative && <Prose text={data.narrative} />}
       <MetricGrid metrics={data.keyMetrics} />
       {data.charts.map((c, i) => (
         <ChartBlock key={i} data={c} />
@@ -364,9 +382,7 @@ function SectionBlock({ data }: { data: ReportSection }) {
     <div className="space-y-6">
       {data.narrative && (
         <div className="rounded-lg border border-sky-100 bg-sky-50/50 px-4 py-3">
-          <p className="whitespace-pre-line text-sm leading-relaxed text-neutral-700">
-            {data.narrative}
-          </p>
+          <Prose text={data.narrative} />
         </div>
       )}
       {data.keyMetrics.length > 0 && <MetricGrid metrics={data.keyMetrics} />}
