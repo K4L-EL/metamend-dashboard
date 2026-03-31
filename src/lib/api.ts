@@ -126,6 +126,11 @@ export const api = {
       client.post<DeviceInfection>("/devices/infections", data).then((r) => r.data),
   },
 
+  ai: {
+    chat: (query: string) =>
+      client.post<{ response: string }>("/ai/chat", { query }).then((r) => r.data.response),
+  },
+
   pipelines: {
     getAll: () =>
       client.get<Pipeline[]>("/pipelines").then((r) => r.data),

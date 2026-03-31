@@ -339,7 +339,7 @@ function matchIntent(query: string): IntentHandler | null {
   return null;
 }
 
-export async function generateAiResponse(query: string): Promise<string> {
+async function generateLocalResponse(query: string): Promise<string> {
   const ctx = await gatherContext();
   const handler = matchIntent(query);
 
@@ -347,4 +347,12 @@ export async function generateAiResponse(query: string): Promise<string> {
 
   return generateSummary(ctx) +
     "\n\n---\n\n*I can help with: infection trends, at-risk patients, outbreak analysis, resistance patterns, alerts, screening compliance, device infections, transmission networks, and prevention recommendations. Try asking a more specific question!*";
+}
+
+export async function generateAiResponse(query: string): Promise<string> {
+  try {
+    return await api.ai.chat(query);
+  } catch {
+    return generateLocalResponse(query);
+  }
 }
