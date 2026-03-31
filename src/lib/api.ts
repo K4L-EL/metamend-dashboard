@@ -27,9 +27,20 @@ import type {
   CreateDeviceInfectionRequest,
   Pipeline,
   CreatePipelineRequest,
+  ReportRequest,
+  ReportResponse,
 } from "../types";
 
-const client = axios.create({ baseURL: "/api" });
+declare global {
+  interface Window {
+    __API_BASE__?: string;
+  }
+}
+
+const apiBase =
+  (typeof window !== "undefined" && window.__API_BASE__) || "/api";
+
+const client = axios.create({ baseURL: apiBase });
 
 export const api = {
   dashboard: {
@@ -129,6 +140,11 @@ export const api = {
   ai: {
     chat: (query: string) =>
       client.post<{ response: string }>("/ai/chat", { query }).then((r) => r.data.response),
+  },
+
+  reports: {
+    generate: (data?: ReportRequest) =>
+      client.post<ReportResponse>("/report/generate", data ?? {}).then((r) => r.data),
   },
 
   pipelines: {

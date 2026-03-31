@@ -81,3 +81,29 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #a3a3a3;
 }
+
+@media print {
+  body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  aside,
+  header,
+  .print\\:hidden {
+    display: none !important;
+  }
+  #root {
+    overflow: visible !important;
+    height: auto !important;
+  }
+  .print\\:max-w-none {
+    max-width: none !important;
+  }
+  .print\\:px-0 {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+  .print\\:break-inside-avoid-page {
+    break-inside: avoid-page;
+  }
+}

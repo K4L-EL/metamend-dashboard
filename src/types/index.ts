@@ -317,3 +317,65 @@ export interface CreatePipelineRequest {
   nodes: PipelineNode[];
   edges: PipelineEdge[];
 }
+
+// ---- Reports ----
+
+export interface ReportRequest {
+  reportType?: string;
+  dateRange?: string;
+}
+
+export interface ReportMetric {
+  label: string;
+  value: string;
+  change?: string;
+  severity?: string;
+}
+
+export interface ReportDataSeries {
+  name: string;
+  values: number[];
+  color?: string;
+}
+
+export interface ReportChartData {
+  chartType: "bar" | "pie" | "line";
+  title: string;
+  labels: string[];
+  series: ReportDataSeries[];
+}
+
+export interface ReportTable {
+  title: string;
+  headers: string[];
+  rows: string[][];
+}
+
+export interface ReportSection {
+  title: string;
+  narrative: string;
+  keyMetrics: ReportMetric[];
+  charts: ReportChartData[];
+  tables: ReportTable[];
+}
+
+export interface ReportExecutiveSummary {
+  narrative: string;
+  keyMetrics: ReportMetric[];
+  charts: ReportChartData[];
+}
+
+export interface ReportResponse {
+  title: string;
+  generatedAt: string;
+  period: string;
+  executiveSummary: ReportExecutiveSummary;
+  infectionBurden: ReportSection;
+  resistancePatterns: ReportSection;
+  patientRisk: ReportSection;
+  outbreakAnalysis: ReportSection;
+  screeningCompliance: ReportSection;
+  deviceInfections: ReportSection;
+  transmissionAnalysis: ReportSection;
+  recommendations: ReportSection;
+}

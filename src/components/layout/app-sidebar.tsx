@@ -14,6 +14,7 @@ import {
   Search,
   Microscope,
   Plug,
+  FileText,
   ChevronRight,
   Settings,
   HelpCircle,
@@ -65,6 +66,7 @@ const navSections: NavSection[] = [
       { to: "/app/outbreaks", icon: Shield, label: "Outbreaks", exact: false },
       { to: "/app/transmission", icon: Network, label: "Transmission", exact: false },
       { to: "/app/pipelines", icon: Workflow, label: "Data Pipelines", exact: false },
+      { to: "/app/reports", icon: FileText, label: "Reports", exact: false },
     ],
   },
 ];
