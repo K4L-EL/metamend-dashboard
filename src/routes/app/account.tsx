@@ -83,19 +83,40 @@ function AccountPage() {
         <Card>
           <CardHeader>
             <CardTitle>Access Permissions</CardTitle>
+            <span className="text-xs text-neutral-400">
+              {user?.isAdmin ? "Administrator — full workspace access" : "Standard member — read/write clinical modules"}
+            </span>
           </CardHeader>
           <CardContent>
             <div className="grid gap-2 sm:grid-cols-2">
               {[
-                "Dashboard", "Surveillance", "Patients", "Screening",
-                "Forecasting", "AMR Tracking", "Hospital Map", "Data Pipelines",
-                "Outbreaks", "Transmission", "Alerts", "Settings",
-              ].map((perm) => (
-                <div key={perm} className="flex items-center justify-between rounded-lg border border-neutral-100 px-3 py-2">
-                  <span className="text-xs text-neutral-700">{perm}</span>
-                  <Badge variant="success" className="text-[10px]">Granted</Badge>
-                </div>
-              ))}
+                { name: "Dashboard", admin: false },
+                { name: "Surveillance", admin: false },
+                { name: "Patients", admin: false },
+                { name: "Screening", admin: false },
+                { name: "Forecasting", admin: false },
+                { name: "AMR Tracking", admin: false },
+                { name: "Hospital Map", admin: false },
+                { name: "Data Pipelines", admin: false },
+                { name: "Outbreaks", admin: false },
+                { name: "Transmission", admin: false },
+                { name: "Alerts", admin: false },
+                { name: "Settings", admin: false },
+                { name: "Admin Panel", admin: true },
+                { name: "User Management", admin: true },
+              ].map((perm) => {
+                const granted = perm.admin ? Boolean(user?.isAdmin) : true;
+                return (
+                  <div key={perm.name} className="flex items-center justify-between rounded-lg border border-neutral-100 px-3 py-2">
+                    <span className="text-xs text-neutral-700">{perm.name}</span>
+                    {granted ? (
+                      <Badge variant="success" className="text-[10px]">Granted</Badge>
+                    ) : (
+                      <Badge variant="default" className="text-[10px]">Admin only</Badge>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </CardContent>
         </Card>

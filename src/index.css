@@ -82,6 +82,18 @@ body {
   background: #a3a3a3;
 }
 
+/* Compact rows — triggered by `apearCompactRows` in Settings. Tightens table padding
+   and list-row spacing so dense screens show more data at once. */
+.metamed-compact table td,
+.metamed-compact table th {
+  padding-top: 0.375rem !important;
+  padding-bottom: 0.375rem !important;
+}
+.metamed-compact [data-row-dense] {
+  padding-top: 0.375rem !important;
+  padding-bottom: 0.375rem !important;
+}
+
 @media print {
   body {
     -webkit-print-color-adjust: exact;

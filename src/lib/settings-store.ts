@@ -54,6 +54,10 @@ function load(): AppSettings {
   }
 }
 
+export function getSettings(): AppSettings {
+  return load();
+}
+
 function save(settings: AppSettings) {
   if (typeof window === "undefined") return;
   try {

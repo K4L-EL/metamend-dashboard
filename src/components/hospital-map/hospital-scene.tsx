@@ -14,6 +14,7 @@ import { MapLegend } from "./map-legend";
 import { BedPanel } from "./bed-panel";
 import { Loading } from "../ui/loading";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
+import { getSettings } from "../../lib/settings-store";
 
 interface HospitalSceneProps {
   locations: LocationRisk[];
@@ -170,7 +171,7 @@ function NavPanel({ light, activeWard, onSelectWard, onSelectFloor, onReset }: N
 export function HospitalScene({ locations, patients }: HospitalSceneProps) {
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
   const [split, setSplit] = useState(true);
-  const [theme, setTheme] = useState<"dark" | "light">("dark");
+  const [theme, setTheme] = useState<"dark" | "light">(() => (getSettings().apearDarkMap ? "dark" : "light"));
   const [cameraTarget, setCameraTarget] = useState<CameraTarget>(DEFAULT_CAMERA);
   const [activeWard, setActiveWard] = useState<string | null>(null);
   const controlsRef = useRef<OrbitControlsImpl | null>(null);

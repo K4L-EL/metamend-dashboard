@@ -184,7 +184,7 @@ function DevicesPage() {
           </div>
           <div className="flex justify-end gap-3 border-t border-neutral-200 pt-4">
             <Button type="button" variant="secondary" onClick={() => setOpen(false)}>Cancel</Button>
-            <Button type="submit" disabled={submitting}>{submitting ? "Saving..." : "Log Infection"}</Button>
+            <Button type="submit" disabled={submitting}>{submitting ? "Saving..." : "Log device infection"}</Button>
           </div>
         </form>
       </Modal>

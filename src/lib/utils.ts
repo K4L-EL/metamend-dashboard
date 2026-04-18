@@ -5,8 +5,27 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+function getDateLocale(): string {
+  try {
+    const raw = typeof window !== "undefined" ? window.localStorage.getItem("metamed.settings.v1") : null;
+    if (!raw) return "en-GB";
+    const parsed = JSON.parse(raw) as { regionDateFormat?: string };
+    switch (parsed.regionDateFormat) {
+      case "MM/DD/YYYY":
+        return "en-US";
+      case "YYYY-MM-DD":
+        return "sv-SE";
+      case "DD/MM/YYYY":
+      default:
+        return "en-GB";
+    }
+  } catch {
+    return "en-GB";
+  }
+}
+
 export function formatDate(date: string | Date): string {
-  return new Intl.DateTimeFormat("en-GB", {
+  return new Intl.DateTimeFormat(getDateLocale(), {
     day: "numeric",
     month: "short",
     year: "numeric",
@@ -14,7 +33,7 @@ export function formatDate(date: string | Date): string {
 }
 
 export function formatDateTime(date: string | Date): string {
-  return new Intl.DateTimeFormat("en-GB", {
+  return new Intl.DateTimeFormat(getDateLocale(), {
     day: "numeric",
     month: "short",
     hour: "2-digit",

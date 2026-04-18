@@ -1,9 +1,10 @@
-import type { ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 import { AppSidebar } from "./app-sidebar";
 import { SidebarProvider, useSidebar } from "./sidebar-context";
 import { AiChatDrawer } from "../ai-chat/chat-panel";
 import { ChatProvider } from "../ai-chat/chat-context";
 import { CommandPaletteProvider } from "./command-palette";
+import { useSettings } from "../../lib/settings-store";
 
 interface AppLayoutProps {
   children: ReactNode;
@@ -11,6 +12,11 @@ interface AppLayoutProps {
 
 function LayoutInner({ children }: AppLayoutProps) {
   const { mobileOpen, closeMobile } = useSidebar();
+  const { settings } = useSettings();
+
+  useEffect(() => {
+    document.documentElement.classList.toggle("metamed-compact", settings.apearCompactRows);
+  }, [settings.apearCompactRows]);
 
   return (
     <div style={{ display: "flex", height: "100vh", overflow: "hidden" }}>

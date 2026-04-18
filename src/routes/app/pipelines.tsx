@@ -17,7 +17,7 @@ import {
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import {
-  Workflow, Play, Pause, Plus, ArrowLeft, Clock, Zap, Database, GitBranch, FileOutput, Download,
+  Workflow, ArrowLeft, Clock, Zap, Database, GitBranch, FileOutput, Download, Save, Check,
 } from "lucide-react";
 import { Header } from "../../components/layout/header";
 import { Button } from "../../components/ui/button";
@@ -142,6 +142,45 @@ function PipelineEditor({ pipeline, onBack }: { pipeline: Pipeline; onBack: () =
   const initial = useMemo(() => pipelineToFlow(pipeline), [pipeline]);
   const [nodes, setNodes, onNodesChange] = useNodesState(initial.nodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initial.edges);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [savedAt, setSavedAt] = useState<number | null>(null);
+
+  const handleSave = useCallback(async () => {
+    setSaving(true);
+    setSaveError(null);
+    try {
+      const apiNodes: PNode[] = nodes.map((n) => {
+        const data = (n.data ?? {}) as Record<string, unknown>;
+        return {
+          id: n.id,
+          type: (data.nodeKind as string) ?? "source",
+          label: (data.label as string) ?? n.id,
+          positionX: n.position.x,
+          positionY: n.position.y,
+          config: (data.config as Record<string, string>) ?? {},
+        };
+      });
+      const apiEdges = edges.map((e) => ({
+        id: e.id,
+        sourceId: e.source,
+        targetId: e.target,
+        label: typeof e.label === "string" ? e.label : null,
+      }));
+      await api.pipelines.update(pipeline.id, {
+        name: pipeline.name,
+        description: pipeline.description,
+        nodes: apiNodes,
+        edges: apiEdges,
+      });
+      setSavedAt(Date.now());
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Failed to save pipeline";
+      setSaveError(msg);
+    } finally {
+      setSaving(false);
+    }
+  }, [edges, nodes, pipeline.id, pipeline.name, pipeline.description]);
 
   const onConnect = useCallback(
     (params: Connection) =>
@@ -216,6 +255,23 @@ function PipelineEditor({ pipeline, onBack }: { pipeline: Pipeline; onBack: () =
                 <ArrowLeft className="h-3.5 w-3.5" /> Back
               </Button>
               <Badge variant={statusColor(pipeline.status)}>{pipeline.status}</Badge>
+              <Button size="sm" onClick={handleSave} disabled={saving}>
+                {saving ? (
+                  <>Saving…</>
+                ) : savedAt && Date.now() - savedAt < 3000 ? (
+                  <><Check className="h-3.5 w-3.5" /> Saved</>
+                ) : (
+                  <><Save className="h-3.5 w-3.5" /> Save</>
+                )}
+              </Button>
+              {saveError && (
+                <span
+                  title={saveError}
+                  className="max-w-[220px] truncate rounded-md border border-red-200 bg-red-50 px-2 py-1 text-[10px] text-red-700"
+                >
+                  {saveError}
+                </span>
+              )}
               <Button
                 size="sm"
                 variant="secondary"

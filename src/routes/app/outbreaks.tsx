@@ -16,7 +16,7 @@ import { GanttChart, type GanttPatient } from "../../components/charts/gantt-cha
 import { useAsync } from "../../hooks/use-async";
 import { api } from "../../lib/api";
 import { formatDate, severityColor, statusColor } from "../../lib/utils";
-import type { Outbreak, CreateOutbreakRequest } from "../../types";
+import type { Outbreak, CreateOutbreakRequest, Patient } from "../../types";
 
 export const Route = createFileRoute("/app/outbreaks")({
   component: OutbreaksPage,
@@ -136,13 +136,20 @@ function generateReport(outbreak: Outbreak): string {
 
 const CLUSTER_NAMES = ["Emily Carter", "Sarah Mitchell", "Ethan Chan", "Sophia Patel", "Liam Johnson", "Chloe Smith"];
 
-function buildClusterPatients(outbreak: Outbreak): GanttPatient[] {
+function buildClusterPatients(outbreak: Outbreak, availablePatients: Patient[]): GanttPatient[] {
   const base = new Date(outbreak.detectedAt);
   const count = Math.min(outbreak.affectedPatients, 6);
-  const names = CLUSTER_NAMES.slice(0, count);
+
+  // Prefer real patients with matching organism or ward; fall back to any patient, then to synthetic rows.
+  const matching = availablePatients.filter((p) => p.organisms.includes(outbreak.organism));
+  const fromWard = availablePatients.filter((p) => p.ward === outbreak.location);
+  const others = availablePatients.filter((p) => !matching.includes(p) && !fromWard.includes(p));
+  const pool = [...matching, ...fromWard, ...others];
+
   const wards = [outbreak.location, "Ward 3A", "Ward 4C", "ICU-A", "Emergency", "Surgical"];
 
-  return names.map((name, i) => {
+  return Array.from({ length: count }, (_, i) => {
+    const real = pool[i];
     const stayStart = new Date(base);
     stayStart.setDate(stayStart.getDate() - 10 + i * 2);
     const stayEnd = new Date(stayStart);
@@ -156,16 +163,19 @@ function buildClusterPatients(outbreak: Outbreak): GanttPatient[] {
     const infDate = new Date(stayStart);
     infDate.setDate(infDate.getDate() + 3 + Math.floor(Math.random() * 5));
 
+    const primaryWard = real?.ward ?? wards[i] ?? outbreak.location;
     return {
-      id: `cp-${i}`,
-      name,
+      id: real?.id ?? `cp-${i}`,
+      name: real?.name ?? CLUSTER_NAMES[i] ?? `Patient ${i + 1}`,
       organism: outbreak.organism,
       wardStays: [
-        { ward: wards[i] ?? outbreak.location, start: stayStart, end: stayEnd },
+        { ward: primaryWard, start: stayStart, end: stayEnd },
         { ward: wards[(i + 1) % wards.length] ?? "Ward 3A", start: stay2Start, end: stay2End },
       ],
       infectionDate: infDate,
-    };
+      // Clickability flag: only real patients navigate
+      _hasProfile: Boolean(real),
+    } as GanttPatient & { _hasProfile: boolean };
   });
 }
 
@@ -183,7 +193,6 @@ function OutbreaksPage() {
   const navigate = useNavigate();
   const outbreaks = useAsync(() => api.outbreaks.getAll(), []);
   const patients = useAsync(() => api.patients.getAll(), []);
-  const transmission = useAsync(() => api.transmission.getNetwork(), []);
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState(EMPTY_FORM);
   const [submitting, setSubmitting] = useState(false);
@@ -191,8 +200,8 @@ function OutbreaksPage() {
   const [selectedCluster, setSelectedCluster] = useState<Outbreak | null>(null);
 
   const clusterPatients = useMemo(
-    () => selectedCluster ? buildClusterPatients(selectedCluster) : [],
-    [selectedCluster],
+    () => selectedCluster ? buildClusterPatients(selectedCluster, patients.data ?? []) : [],
+    [selectedCluster, patients.data],
   );
 
   const set = (field: keyof CreateOutbreakRequest, value: string | number) =>
@@ -307,7 +316,12 @@ function OutbreaksPage() {
             <GanttChart
               patients={clusterPatients}
               title={`Cluster ${selectedCluster.affectedPatients} (${selectedCluster.affectedPatients} patients)`}
-              onPatientClick={(id) => navigate({ to: "/app/patients", search: { patientId: id } })}
+              onPatientClick={(id) => {
+                const match = clusterPatients.find((cp) => cp.id === id) as (GanttPatient & { _hasProfile?: boolean }) | undefined;
+                if (match?._hasProfile) {
+                  navigate({ to: "/app/patients", search: { patientId: id } });
+                }
+              }}
             />
 
             {/* AI-generated outbreak analysis */}

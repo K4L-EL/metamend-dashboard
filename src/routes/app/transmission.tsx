@@ -114,8 +114,17 @@ function TransmissionPage() {
               />
             </div>
 
-            <div className="flex gap-6">
-              <div className="flex-1">
+            <div className={cn("flex gap-6", graphExpanded && "fixed inset-0 z-40 bg-white/95 p-4 backdrop-blur-sm")}>
+              <div className="relative flex-1">
+                <button
+                  onClick={() => setGraphExpanded((v) => !v)}
+                  title={graphExpanded ? "Exit full screen" : "Full screen"}
+                  className="absolute right-3 top-3 z-10 rounded-md border border-neutral-200 bg-white/90 p-1.5 text-neutral-500 shadow-sm transition-colors hover:bg-neutral-50 hover:text-neutral-800"
+                >
+                  {graphExpanded
+                    ? <Minimize2 className="h-3.5 w-3.5" strokeWidth={1.8} />
+                    : <Maximize2 className="h-3.5 w-3.5" strokeWidth={1.8} />}
+                </button>
                 <NetworkGraph network={network.data} onSelectNode={setSelectedNode} />
               </div>
 

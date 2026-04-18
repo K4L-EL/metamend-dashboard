@@ -78,6 +78,9 @@ function UsersTab() {
   const [showCreate, setShowCreate] = useState(false);
   const [editing, setEditing] = useState<AuthUser | null>(null);
   const [resetting, setResetting] = useState<AuthUser | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState<AuthUser | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   async function refresh() {
     const res = await api.admin.listUsers({ search: search || undefined, page: 1, pageSize: 200 });
@@ -148,17 +151,9 @@ function UsersTab() {
                       <div className="inline-flex items-center gap-1">
                         <IconBtn title="Edit" onClick={() => setEditing(u)}><Pencil className="h-3.5 w-3.5" /></IconBtn>
                         <IconBtn title="Reset password" onClick={() => setResetting(u)}><KeyRound className="h-3.5 w-3.5" /></IconBtn>
-                        <IconBtn title="Delete" onClick={async () => {
-                          if (confirm(`Delete ${u.displayName}?`)) {
-                            try {
-                              await api.admin.deleteUser(u.id);
-                              refresh();
-                            } catch (e) {
-                              const msg = (e as { response?: { data?: { message?: string } } })?.response?.data?.message ?? "Could not delete user";
-                              alert(msg);
-                            }
-                          }
-                        }}><Trash2 className="h-3.5 w-3.5 text-red-500" /></IconBtn>
+                        <IconBtn title="Delete" onClick={() => { setConfirmDelete(u); setDeleteError(null); }}>
+                          <Trash2 className="h-3.5 w-3.5 text-red-500" />
+                        </IconBtn>
                       </div>
                     </Td>
                   </tr>
@@ -188,7 +183,81 @@ function UsersTab() {
           onClose={() => setResetting(null)}
         />
       )}
+      {confirmDelete && (
+        <ConfirmDeleteUserModal
+          user={confirmDelete}
+          error={deleteError}
+          loading={deleteLoading}
+          onCancel={() => { setConfirmDelete(null); setDeleteError(null); }}
+          onConfirm={async () => {
+            setDeleteLoading(true);
+            setDeleteError(null);
+            try {
+              await api.admin.deleteUser(confirmDelete.id);
+              setConfirmDelete(null);
+              refresh();
+            } catch (e) {
+              const msg = (e as { response?: { data?: { message?: string } } })?.response?.data?.message ?? "Could not delete user";
+              setDeleteError(msg);
+            } finally {
+              setDeleteLoading(false);
+            }
+          }}
+        />
+      )}
     </Card>
+  );
+}
+
+function ConfirmDeleteUserModal({
+  user, error, loading, onCancel, onConfirm,
+}: {
+  user: AuthUser;
+  error: string | null;
+  loading: boolean;
+  onCancel: () => void;
+  onConfirm: () => void;
+}) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 p-4" onClick={onCancel}>
+      <div
+        className="w-full max-w-sm rounded-xl border border-neutral-200 bg-white p-5 shadow-xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-start gap-3">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-red-100">
+            <Trash2 className="h-4 w-4 text-red-600" />
+          </div>
+          <div>
+            <h3 className="text-sm font-semibold text-neutral-900">Delete user?</h3>
+            <p className="mt-1 text-xs text-neutral-600">
+              <span className="font-medium">{user.displayName}</span> ({user.email}) will lose access immediately. This cannot be undone.
+            </p>
+          </div>
+        </div>
+        {error && (
+          <div className="mt-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
+            {error}
+          </div>
+        )}
+        <div className="mt-5 flex items-center justify-end gap-2">
+          <button
+            onClick={onCancel}
+            disabled={loading}
+            className="rounded-lg border border-neutral-200 px-3 py-1.5 text-xs font-medium text-neutral-600 hover:bg-neutral-50 disabled:opacity-40"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={onConfirm}
+            disabled={loading}
+            className="rounded-lg bg-red-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-red-700 disabled:opacity-40"
+          >
+            {loading ? "Deleting…" : "Delete user"}
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }
 

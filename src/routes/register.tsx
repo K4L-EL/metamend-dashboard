@@ -17,6 +17,7 @@ export const Route = createFileRoute("/register")({
 function RegisterPage() {
   const { register } = useAuth();
   const navigate = useNavigate();
+  const { invite } = Route.useSearch();
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -43,6 +44,7 @@ function RegisterPage() {
         displayName: form.displayName.trim(),
         title: form.title.trim() || undefined,
         organization: form.organization.trim() || undefined,
+        inviteToken: invite,
       });
       navigate({ to: "/app" });
     } catch (err: unknown) {
@@ -65,6 +67,11 @@ function RegisterPage() {
           </div>
           <h1 className="text-xl font-bold tracking-tight text-neutral-900">Create your account</h1>
           <p className="mt-1 text-xs text-neutral-500">Join your hospital's IPC intelligence workspace</p>
+          {invite && (
+            <div className="mt-4 inline-flex items-center gap-1.5 rounded-full border border-sky-200 bg-sky-50 px-3 py-1 text-[11px] font-medium text-sky-700">
+              You've been invited to a team — sign up to accept
+            </div>
+          )}
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-3 rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm">

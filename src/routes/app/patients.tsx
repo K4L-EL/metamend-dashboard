@@ -259,10 +259,18 @@ function PatientsPage() {
                 {selectedPatient.organisms.map((o) => <Badge key={o} variant="critical">{o}</Badge>)}
               </div>
               <div className="flex items-center gap-2">
-                <button className="rounded-md p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600">
+                <button
+                  onClick={() => setTrendModalOpen(true)}
+                  title="Open 60-day trend view"
+                  className="rounded-md p-1.5 text-neutral-400 transition-colors hover:bg-sky-50 hover:text-sky-600"
+                >
                   <TrendingUp className="h-4 w-4" />
                 </button>
-                <button onClick={() => setSelectedPatient(null)} className="rounded-md p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600">
+                <button
+                  onClick={() => setSelectedPatient(null)}
+                  title="Close"
+                  className="rounded-md p-1.5 text-neutral-400 transition-colors hover:bg-neutral-100 hover:text-neutral-600"
+                >
                   <X className="h-4 w-4" />
                 </button>
               </div>
@@ -344,7 +352,7 @@ function PatientsPage() {
                   <BarChart3 className="h-4 w-4 text-neutral-500" />
                   <h3 className="text-sm font-semibold text-neutral-900">Risk Explainer</h3>
                 </div>
-                <p className="mb-3 text-[10px] text-neutral-400">Factors that contribute to the patient's infection risk. Click on each factor to view more detail.</p>
+                <p className="mb-3 text-[10px] text-neutral-400">Factors that contribute to the patient's infection risk. Hover over each bar to see its weighted contribution.</p>
                 <div className="h-48">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={riskFactors} layout="vertical" margin={{ left: 90, right: 20, top: 5, bottom: 5 }}>

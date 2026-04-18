@@ -149,7 +149,7 @@ export function ArticlesAdminTab() {
                         <div className="flex items-center justify-end gap-1">
                           {a.status === "published" && (
                             <a
-                              href={`/blog/${a.slug}`}
+                              href={`https://metamed.io/blog/${a.slug}`}
                               target="_blank"
                               rel="noreferrer"
                               title="View on blog"
