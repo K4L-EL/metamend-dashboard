@@ -7,6 +7,7 @@ import { Badge } from "../../components/ui/badge";
 import { Loading } from "../../components/ui/loading";
 import { InfectionTrendChart } from "../../components/charts/infection-trend-chart";
 import { RiskDistributionChart } from "../../components/charts/risk-distribution-chart";
+import { LabBriefing } from "../../components/dashboard/lab-briefing";
 import { useAsync } from "../../hooks/use-async";
 import { api } from "../../lib/api";
 import { formatDateTime, severityColor } from "../../lib/utils";
@@ -40,6 +41,8 @@ function DashboardPage() {
         subtitle="Real-time infection intelligence overview"
       />
       <div className="space-y-6 p-4 sm:p-6">
+        <LabBriefing />
+
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <StatCard
             title="Active Infections"

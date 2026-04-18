@@ -11,6 +11,8 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AppRouteRouteImport } from './routes/app/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as RegisterRouteImport } from './routes/register'
 import { Route as AppIndexRouteImport } from './routes/app/index'
 import { Route as AppTransmissionRouteImport } from './routes/app/transmission'
 import { Route as AppSurveillanceRouteImport } from './routes/app/surveillance'
@@ -27,6 +29,8 @@ import { Route as AppDevicesRouteImport } from './routes/app/devices'
 import { Route as AppAlertsRouteImport } from './routes/app/alerts'
 import { Route as AppReportsRouteImport } from './routes/app/reports'
 import { Route as AppAccountRouteImport } from './routes/app/account'
+import { Route as AppAdminRouteImport } from './routes/app/admin'
+import { Route as AppTeamRouteImport } from './routes/app/team'
 
 const AppRouteRoute = AppRouteRouteImport.update({
   id: '/app',
@@ -36,6 +40,16 @@ const AppRouteRoute = AppRouteRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RegisterRoute = RegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppIndexRoute = AppIndexRouteImport.update({
@@ -118,11 +132,24 @@ const AppAccountRoute = AppAccountRouteImport.update({
   path: '/account',
   getParentRoute: () => AppRouteRoute,
 } as any)
+const AppAdminRoute = AppAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AppRouteRoute,
+} as any)
+const AppTeamRoute = AppTeamRouteImport.update({
+  id: '/team',
+  path: '/team',
+  getParentRoute: () => AppRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/login': typeof LoginRoute
+  '/register': typeof RegisterRoute
   '/app': typeof AppRouteRouteWithChildren
   '/app/account': typeof AppAccountRoute
+  '/app/admin': typeof AppAdminRoute
   '/app/alerts': typeof AppAlertsRoute
   '/app/devices': typeof AppDevicesRoute
   '/app/forecasting': typeof AppForecastingRoute
@@ -136,12 +163,16 @@ export interface FileRoutesByFullPath {
   '/app/screening': typeof AppScreeningRoute
   '/app/settings': typeof AppSettingsRoute
   '/app/surveillance': typeof AppSurveillanceRoute
+  '/app/team': typeof AppTeamRoute
   '/app/transmission': typeof AppTransmissionRoute
   '/app/': typeof AppIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/login': typeof LoginRoute
+  '/register': typeof RegisterRoute
   '/app/account': typeof AppAccountRoute
+  '/app/admin': typeof AppAdminRoute
   '/app/alerts': typeof AppAlertsRoute
   '/app/devices': typeof AppDevicesRoute
   '/app/forecasting': typeof AppForecastingRoute
@@ -155,14 +186,18 @@ export interface FileRoutesByTo {
   '/app/screening': typeof AppScreeningRoute
   '/app/settings': typeof AppSettingsRoute
   '/app/surveillance': typeof AppSurveillanceRoute
+  '/app/team': typeof AppTeamRoute
   '/app/transmission': typeof AppTransmissionRoute
   '/app': typeof AppIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/login': typeof LoginRoute
+  '/register': typeof RegisterRoute
   '/app': typeof AppRouteRouteWithChildren
   '/app/account': typeof AppAccountRoute
+  '/app/admin': typeof AppAdminRoute
   '/app/alerts': typeof AppAlertsRoute
   '/app/devices': typeof AppDevicesRoute
   '/app/forecasting': typeof AppForecastingRoute
@@ -176,6 +211,7 @@ export interface FileRoutesById {
   '/app/screening': typeof AppScreeningRoute
   '/app/settings': typeof AppSettingsRoute
   '/app/surveillance': typeof AppSurveillanceRoute
+  '/app/team': typeof AppTeamRoute
   '/app/transmission': typeof AppTransmissionRoute
   '/app/': typeof AppIndexRoute
 }
@@ -183,8 +219,11 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/login'
+    | '/register'
     | '/app'
     | '/app/account'
+    | '/app/admin'
     | '/app/alerts'
     | '/app/devices'
     | '/app/forecasting'
@@ -198,12 +237,16 @@ export interface FileRouteTypes {
     | '/app/screening'
     | '/app/settings'
     | '/app/surveillance'
+    | '/app/team'
     | '/app/transmission'
     | '/app/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/login'
+    | '/register'
     | '/app/account'
+    | '/app/admin'
     | '/app/alerts'
     | '/app/devices'
     | '/app/forecasting'
@@ -217,13 +260,17 @@ export interface FileRouteTypes {
     | '/app/screening'
     | '/app/settings'
     | '/app/surveillance'
+    | '/app/team'
     | '/app/transmission'
     | '/app'
   id:
     | '__root__'
     | '/'
+    | '/login'
+    | '/register'
     | '/app'
     | '/app/account'
+    | '/app/admin'
     | '/app/alerts'
     | '/app/devices'
     | '/app/forecasting'
@@ -237,12 +284,15 @@ export interface FileRouteTypes {
     | '/app/screening'
     | '/app/settings'
     | '/app/surveillance'
+    | '/app/team'
     | '/app/transmission'
     | '/app/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  LoginRoute: typeof LoginRoute
+  RegisterRoute: typeof RegisterRoute
   AppRouteRoute: typeof AppRouteRouteWithChildren
 }
 
@@ -260,6 +310,20 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof RegisterRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/app/': {
@@ -374,11 +438,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAccountRouteImport
       parentRoute: typeof AppRouteRoute
     }
+    '/app/admin': {
+      id: '/app/admin'
+      path: '/admin'
+      fullPath: '/app/admin'
+      preLoaderRoute: typeof AppAdminRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
+    '/app/team': {
+      id: '/app/team'
+      path: '/team'
+      fullPath: '/app/team'
+      preLoaderRoute: typeof AppTeamRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
   }
 }
 
 interface AppRouteRouteChildren {
   AppAccountRoute: typeof AppAccountRoute
+  AppAdminRoute: typeof AppAdminRoute
   AppAlertsRoute: typeof AppAlertsRoute
   AppDevicesRoute: typeof AppDevicesRoute
   AppForecastingRoute: typeof AppForecastingRoute
@@ -392,12 +471,14 @@ interface AppRouteRouteChildren {
   AppScreeningRoute: typeof AppScreeningRoute
   AppSettingsRoute: typeof AppSettingsRoute
   AppSurveillanceRoute: typeof AppSurveillanceRoute
+  AppTeamRoute: typeof AppTeamRoute
   AppTransmissionRoute: typeof AppTransmissionRoute
   AppIndexRoute: typeof AppIndexRoute
 }
 
 const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppAccountRoute: AppAccountRoute,
+  AppAdminRoute: AppAdminRoute,
   AppAlertsRoute: AppAlertsRoute,
   AppDevicesRoute: AppDevicesRoute,
   AppForecastingRoute: AppForecastingRoute,
@@ -411,6 +492,7 @@ const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppScreeningRoute: AppScreeningRoute,
   AppSettingsRoute: AppSettingsRoute,
   AppSurveillanceRoute: AppSurveillanceRoute,
+  AppTeamRoute: AppTeamRoute,
   AppTransmissionRoute: AppTransmissionRoute,
   AppIndexRoute: AppIndexRoute,
 }
@@ -421,6 +503,8 @@ const AppRouteRouteWithChildren = AppRouteRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  LoginRoute: LoginRoute,
+  RegisterRoute: RegisterRoute,
   AppRouteRoute: AppRouteRouteWithChildren,
 }
 export const routeTree = rootRouteImport

@@ -29,6 +29,17 @@ import type {
   CreatePipelineRequest,
   ReportRequest,
   ReportResponse,
+  AuthResponse,
+  AuthUser,
+  TeamSummary,
+  TeamDetail,
+  TeamInviteDto,
+  AdminTeamRow,
+  AdminInviteRow,
+  BlogArticle,
+  BlogArticleListItem,
+  ArticleUpsertRequest,
+  GenerateArticleRequest,
 } from "../types";
 
 declare global {
@@ -41,6 +52,43 @@ const apiBase =
   (typeof window !== "undefined" && window.__API_BASE__) || "/api";
 
 const client = axios.create({ baseURL: apiBase });
+
+const TOKEN_KEY = "metamed.session";
+
+client.interceptors.request.use((config) => {
+  if (typeof window === "undefined") return config;
+  try {
+    const raw = localStorage.getItem(TOKEN_KEY);
+    if (raw) {
+      const session = JSON.parse(raw) as { token?: string };
+      if (session?.token) {
+        config.headers = config.headers ?? {};
+        (config.headers as Record<string, string>).Authorization = `Bearer ${session.token}`;
+      }
+    }
+  } catch {
+    // ignore
+  }
+  return config;
+});
+
+client.interceptors.response.use(
+  (r) => r,
+  (error) => {
+    if (typeof window !== "undefined" && error?.response?.status === 401) {
+      try {
+        localStorage.removeItem(TOKEN_KEY);
+      } catch {
+        // ignore
+      }
+      const path = window.location.pathname;
+      if (path.startsWith("/app") && !path.startsWith("/login")) {
+        window.location.href = `/login?redirect=${encodeURIComponent(path + window.location.search)}`;
+      }
+    }
+    return Promise.reject(error);
+  },
+);
 
 export const api = {
   dashboard: {
@@ -145,6 +193,71 @@ export const api = {
   reports: {
     generate: (data?: ReportRequest) =>
       client.post<ReportResponse>("/report/generate", data ?? {}).then((r) => r.data),
+  },
+
+  auth: {
+    register: (data: { email: string; password: string; displayName: string; title?: string; organization?: string; inviteToken?: string }) =>
+      client.post<AuthResponse>("/auth/register", data).then((r) => r.data),
+    login: (data: { email: string; password: string }) =>
+      client.post<AuthResponse>("/auth/login", data).then((r) => r.data),
+    logout: () => client.post("/auth/logout").then(() => undefined),
+    me: () => client.get<AuthUser>("/auth/me").then((r) => r.data),
+  },
+
+  admin: {
+    listUsers: (params?: { search?: string; page?: number; pageSize?: number }) =>
+      client.get<{ total: number; page: number; pageSize: number; users: AuthUser[] }>("/admin/users", { params }).then((r) => r.data),
+    createUser: (data: { email: string; password: string; displayName: string; title?: string; organization?: string; isAdmin: boolean }) =>
+      client.post<AuthUser>("/admin/users", data).then((r) => r.data),
+    updateUser: (id: string, data: { displayName?: string; title?: string; organization?: string; isAdmin?: boolean }) =>
+      client.patch<AuthUser>(`/admin/users/${id}`, data).then((r) => r.data),
+    resetPassword: (id: string, newPassword: string) =>
+      client.post(`/admin/users/${id}/reset-password`, { newPassword }).then((r) => r.data),
+    deleteUser: (id: string) =>
+      client.delete(`/admin/users/${id}`).then(() => undefined),
+    listAllTeams: () => client.get<AdminTeamRow[]>("/admin/teams").then((r) => r.data),
+    listAllInvites: () => client.get<AdminInviteRow[]>("/admin/invites").then((r) => r.data),
+  },
+
+  teams: {
+    myTeams: () => client.get<TeamSummary[]>("/teams").then((r) => r.data),
+    create: (data: { name: string; description?: string }) =>
+      client.post<TeamSummary>("/teams", data).then((r) => r.data),
+    getTeam: (id: string) => client.get<TeamDetail>(`/teams/${id}`).then((r) => r.data),
+    invite: (id: string, data: { email: string; role: string }) =>
+      client.post<TeamInviteDto>(`/teams/${id}/invite`, data).then((r) => r.data),
+    acceptInvite: (token: string) =>
+      client.post<{ teamId: string }>(`/teams/invites/${token}/accept`).then((r) => r.data),
+    updateMemberRole: (teamId: string, userId: string, role: string) =>
+      client.patch(`/teams/${teamId}/members/${userId}`, { role }).then(() => undefined),
+    removeMember: (teamId: string, userId: string) =>
+      client.delete(`/teams/${teamId}/members/${userId}`).then(() => undefined),
+  },
+
+  articles: {
+    listAdmin: () => client.get<BlogArticleListItem[]>("/articles").then((r) => r.data),
+    listPublished: () => client.get<BlogArticleListItem[]>("/articles/published").then((r) => r.data),
+    getAdmin: (id: string) => client.get<BlogArticle>(`/articles/${id}`).then((r) => r.data),
+    getPublishedBySlug: (slug: string) =>
+      client.get<BlogArticle>(`/articles/published/${slug}`).then((r) => r.data),
+    create: (data: ArticleUpsertRequest) =>
+      client.post<{ id: string; slug: string }>("/articles", data).then((r) => r.data),
+    update: (id: string, data: ArticleUpsertRequest) =>
+      client.put<{ id: string; slug: string }>(`/articles/${id}`, data).then((r) => r.data),
+    delete: (id: string) => client.delete(`/articles/${id}`).then(() => undefined),
+    generate: (data: GenerateArticleRequest) =>
+      client.post<{ id: string; slug: string; title: string }>("/articles/generate", data).then((r) => r.data),
+    regenerateImage: (id: string) =>
+      client.post<{ coverImageUrl: string }>(`/articles/${id}/regenerate-image`).then((r) => r.data),
+    uploadImage: (file: File) => {
+      const fd = new FormData();
+      fd.append("file", file);
+      return client
+        .post<{ url: string }>("/articles/upload", fd, {
+          headers: { "Content-Type": "multipart/form-data" },
+        })
+        .then((r) => r.data);
+    },
   },
 
   pipelines: {

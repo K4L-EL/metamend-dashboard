@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect } from "react";
 import { createFileRoute, useNavigate, useSearch } from "@tanstack/react-router";
 import {
   Plus, X, MapPin, Activity, ShieldAlert, Search,
-  AlertTriangle, TrendingUp, BarChart3, GitBranch,
+  AlertTriangle, TrendingUp, BarChart3, GitBranch, Maximize2,
 } from "lucide-react";
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -15,6 +15,7 @@ import { Loading } from "../../components/ui/loading";
 import { Modal } from "../../components/ui/modal";
 import { FormField, Input, Select } from "../../components/ui/form-field";
 import { Card, CardContent } from "../../components/ui/card";
+import { PatientTrendModal } from "../../components/patients/patient-trend-modal";
 import { useAsync } from "../../hooks/use-async";
 import { api } from "../../lib/api";
 import { formatDate, cn } from "../../lib/utils";
@@ -95,6 +96,7 @@ function PatientsPage() {
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
   const [listTab, setListTab] = useState<ListTab>("at-risk");
   const [searchQuery, setSearchQuery] = useState("");
+  const [trendModalOpen, setTrendModalOpen] = useState(false);
 
   useEffect(() => {
     if (patientId && patients.data && !selectedPatient) {
@@ -306,11 +308,20 @@ function PatientsPage() {
 
               {/* Risk Over Time chart */}
               <div>
-                <div className="mb-3 flex items-center gap-2">
-                  <Activity className="h-4 w-4 text-neutral-500" />
-                  <h3 className="text-sm font-semibold text-neutral-900">Risk Over Time</h3>
+                <div className="mb-3 flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <Activity className="h-4 w-4 text-neutral-500" />
+                    <h3 className="text-sm font-semibold text-neutral-900">Risk Over Time</h3>
+                  </div>
+                  <button
+                    onClick={() => setTrendModalOpen(true)}
+                    className="inline-flex items-center gap-1 rounded-md border border-neutral-200 bg-white px-2 py-1 text-[10px] font-medium text-neutral-600 transition-colors hover:border-sky-300 hover:text-sky-700"
+                  >
+                    <Maximize2 className="h-3 w-3" />
+                    Expand trend
+                  </button>
                 </div>
-                <p className="mb-3 text-[10px] text-neutral-400">Predicted risk over time. Hover over time points for more detail.</p>
+                <p className="mb-3 text-[10px] text-neutral-400">Predicted risk over time. Hover over time points for more detail, or expand for 60-day view.</p>
                 <div className="h-48">
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={riskHistory}>
@@ -507,6 +518,13 @@ function PatientsPage() {
           </div>
         </form>
       </Modal>
+
+      <PatientTrendModal
+        open={trendModalOpen}
+        onClose={() => setTrendModalOpen(false)}
+        patient={selectedPatient}
+        infections={patientInfections}
+      />
     </div>
   );
 }

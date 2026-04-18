@@ -1,14 +1,34 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { User, Mail, Building2, Shield, Clock, Key } from "lucide-react";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { User, Mail, Building2, Shield, Clock, LogOut } from "lucide-react";
 import { Header } from "../../components/layout/header";
 import { Card, CardHeader, CardTitle, CardContent } from "../../components/ui/card";
 import { Badge } from "../../components/ui/badge";
+import { useAuth } from "../../lib/auth-context";
 
 export const Route = createFileRoute("/app/account")({
   component: AccountPage,
 });
 
 function AccountPage() {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const initials = (user?.displayName ?? "")
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((s) => s[0]?.toUpperCase() ?? "")
+    .join("") || "U";
+
+  const formatDate = (iso?: string | null) => {
+    if (!iso) return "—";
+    try {
+      return new Date(iso).toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" });
+    } catch {
+      return iso;
+    }
+  };
+
   return (
     <div>
       <Header title="Account" subtitle="Your profile and access information" />
@@ -16,18 +36,30 @@ function AccountPage() {
         {/* Profile */}
         <Card>
           <CardContent className="p-6">
-            <div className="flex items-center gap-5">
-              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-sky-100 text-xl font-bold text-sky-700">
-                KM
-              </div>
-              <div>
-                <h2 className="text-lg font-semibold text-neutral-900">Dr. Khalil Mohamed</h2>
-                <p className="text-sm text-neutral-500">Infection Prevention & Control Lead</p>
-                <div className="mt-1.5 flex items-center gap-2">
-                  <Badge variant="metamed">Admin</Badge>
-                  <Badge variant="success">Active</Badge>
+            <div className="flex items-center justify-between gap-5">
+              <div className="flex items-center gap-5">
+                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-sky-100 text-xl font-bold text-sky-700">
+                  {initials}
+                </div>
+                <div>
+                  <h2 className="text-lg font-semibold text-neutral-900">{user?.displayName ?? "—"}</h2>
+                  <p className="text-sm text-neutral-500">{user?.title ?? "Team member"}</p>
+                  <div className="mt-1.5 flex items-center gap-2">
+                    {user?.isAdmin && <Badge variant="metamed">Admin</Badge>}
+                    <Badge variant="success">Active</Badge>
+                  </div>
                 </div>
               </div>
+              <button
+                onClick={async () => {
+                  await logout();
+                  navigate({ to: "/login" });
+                }}
+                className="inline-flex items-center gap-1.5 rounded-lg border border-neutral-200 px-3 py-1.5 text-xs font-medium text-neutral-600 transition-colors hover:bg-neutral-50"
+              >
+                <LogOut className="h-3.5 w-3.5" />
+                Log out
+              </button>
             </div>
           </CardContent>
         </Card>
@@ -38,12 +70,12 @@ function AccountPage() {
             <CardTitle>Profile Details</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <DetailRow icon={User} label="Full Name" value="Dr. Khalil Mohamed" />
-            <DetailRow icon={Mail} label="Email" value="k.mohamed@metamed.io" />
-            <DetailRow icon={Building2} label="Organisation" value="Royal London Hospital" />
-            <DetailRow icon={Shield} label="Role" value="IPC Lead — Administrator" />
-            <DetailRow icon={Clock} label="Last Login" value="21 Feb 2026, 09:14" />
-            <DetailRow icon={Key} label="API Key" value="mm_live_••••••••3f8a" />
+            <DetailRow icon={User} label="Full Name" value={user?.displayName ?? "—"} />
+            <DetailRow icon={Mail} label="Email" value={user?.email ?? "—"} />
+            <DetailRow icon={Building2} label="Organisation" value={user?.organization ?? "—"} />
+            <DetailRow icon={Shield} label="Role" value={user?.isAdmin ? "Administrator" : (user?.title ?? "Member")} />
+            <DetailRow icon={Clock} label="Last Login" value={formatDate(user?.lastLoginAt)} />
+            <DetailRow icon={Clock} label="Account Created" value={formatDate(user?.createdAt)} />
           </CardContent>
         </Card>
 

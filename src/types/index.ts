@@ -379,3 +379,124 @@ export interface ReportResponse {
   transmissionAnalysis: ReportSection;
   recommendations: ReportSection;
 }
+
+export interface AuthUser {
+  id: string;
+  email: string;
+  displayName: string;
+  title?: string | null;
+  organization?: string | null;
+  isAdmin: boolean;
+  createdAt: string;
+  lastLoginAt?: string | null;
+}
+
+export interface AuthResponse {
+  accessToken: string;
+  user: AuthUser;
+}
+
+export interface TeamSummary {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string | null;
+  myRole: string;
+  memberCount: number;
+  createdAt: string;
+}
+
+export interface TeamMemberDto {
+  userId: string;
+  displayName: string;
+  email: string;
+  role: string;
+  joinedAt: string;
+}
+
+export interface TeamInviteDto {
+  id: string;
+  email: string;
+  role: string;
+  token: string;
+  createdAt: string;
+  expiresAt: string;
+}
+
+export interface TeamDetail {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string | null;
+  createdAt: string;
+  ownerId: string;
+  myRole: string;
+  members: TeamMemberDto[];
+  pendingInvites: TeamInviteDto[];
+}
+
+export interface AdminTeamRow {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string | null;
+  ownerId: string;
+  createdAt: string;
+  memberCount: number;
+}
+
+export interface AdminInviteRow {
+  id: string;
+  email: string;
+  role: number;
+  token: string;
+  status: string;
+  createdAt: string;
+  expiresAt: string;
+  teamName: string;
+}
+
+export interface BlogArticleListItem {
+  id: string;
+  title: string;
+  slug: string;
+  category: string;
+  summary: string;
+  coverImageUrl: string;
+  status: string;
+  isFeatured: boolean;
+  authorName: string;
+  publishedAt?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface BlogArticle extends BlogArticleListItem {
+  content: string;
+  metaTitle: string;
+  metaDescription: string;
+  keywords: string;
+}
+
+export interface ArticleUpsertRequest {
+  title?: string;
+  slug?: string;
+  category?: string;
+  summary?: string;
+  content?: string;
+  coverImageUrl?: string;
+  status?: "draft" | "published";
+  isFeatured?: boolean;
+  publishedAt?: string | null;
+  metaTitle?: string;
+  metaDescription?: string;
+  keywords?: string;
+}
+
+export interface GenerateArticleRequest {
+  topic: string;
+  tone?: string;
+  length?: "short" | "medium" | "long";
+  category?: string;
+  generateImage?: boolean;
+}

@@ -1,5 +1,9 @@
-import { Bell, Menu } from "lucide-react";
+import { Menu, Search } from "lucide-react";
 import { useSidebar } from "./sidebar-context";
+import { AiChatToggle } from "../ai-chat/chat-panel";
+import { NotificationsPopover } from "./notifications-popover";
+import { ProfileMenu } from "./profile-menu";
+import { useCommandPalette } from "./command-palette";
 
 interface HeaderProps {
   title: string;
@@ -8,6 +12,7 @@ interface HeaderProps {
 
 export function Header({ title, subtitle }: HeaderProps) {
   const { openMobile } = useSidebar();
+  const { open: openPalette } = useCommandPalette();
 
   return (
     <header className="flex h-[52px] items-center justify-between border-b border-neutral-200 bg-white px-4 shadow-sm sm:px-6">
@@ -31,22 +36,19 @@ export function Header({ title, subtitle }: HeaderProps) {
       </div>
 
       <div className="flex items-center gap-1">
-        <button className="relative rounded-lg p-2 text-neutral-500 transition-colors hover:bg-neutral-100 hover:text-neutral-700">
-          <Bell className="h-4 w-4" strokeWidth={1.8} />
-          <span className="absolute right-1.5 top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-neutral-800 px-1 text-[8px] font-bold text-white">
-            3
-          </span>
+        <button
+          onClick={openPalette}
+          className="mr-1 hidden items-center gap-2 rounded-lg border border-neutral-200 bg-neutral-50 px-2.5 py-1.5 text-left transition-colors hover:bg-neutral-100 sm:flex"
+          title="Command palette"
+        >
+          <Search className="h-3 w-3 text-neutral-400" strokeWidth={2} />
+          <span className="text-[11px] text-neutral-500">Search</span>
+          <kbd className="rounded bg-white px-1 py-px text-[9px] text-neutral-500">⌘K</kbd>
         </button>
+        <AiChatToggle />
+        <NotificationsPopover />
         <div className="ml-1 h-6 w-px bg-neutral-200" />
-        <button className="ml-1 flex items-center gap-2 rounded-lg px-2 py-1.5 transition-colors hover:bg-neutral-50">
-          <div className="flex h-7 w-7 items-center justify-center rounded-full bg-neutral-700 text-[10px] font-bold text-white">
-            KM
-          </div>
-          <div className="hidden text-left lg:block">
-            <p className="text-xs font-medium leading-tight text-neutral-900">Dr. K. Mohamed</p>
-            <p className="text-[10px] text-neutral-500">IPC Lead</p>
-          </div>
-        </button>
+        <ProfileMenu />
       </div>
     </header>
   );

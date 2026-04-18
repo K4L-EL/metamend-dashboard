@@ -1,4 +1,4 @@
-import { Link, useRouterState } from "@tanstack/react-router";
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import {
   LayoutDashboard,
   Activity,
@@ -21,10 +21,14 @@ import {
   LogOut,
   PanelLeftClose,
   PanelLeftOpen,
+  ShieldCheck,
+  UsersRound,
   X,
 } from "lucide-react";
 import { cn } from "../../lib/utils";
 import { useSidebar } from "./sidebar-context";
+import { useAuth } from "../../lib/auth-context";
+import { useCommandPalette } from "./command-palette";
 import type { LucideIcon } from "lucide-react";
 
 interface NavItem {
@@ -79,6 +83,9 @@ export function AppSidebar({ mobile }: AppSidebarProps) {
   const routerState = useRouterState();
   const currentPath = routerState.location.pathname;
   const { collapsed, toggle, closeMobile } = useSidebar();
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  const { open: openPalette } = useCommandPalette();
 
   const isCollapsed = mobile ? false : collapsed;
   const width = isCollapsed ? 60 : 240;
@@ -86,6 +93,25 @@ export function AppSidebar({ mobile }: AppSidebarProps) {
   const handleNavClick = () => {
     if (mobile) closeMobile();
   };
+
+  const handleLogout = async () => {
+    await logout();
+    navigate({ to: "/login" });
+  };
+
+  const initials = (user?.displayName ?? "")
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((s) => s[0]?.toUpperCase() ?? "")
+    .join("") || "U";
+
+  const teamItem: NavItem = { to: "/app/team", icon: UsersRound, label: "Team", exact: false };
+  const adminItem: NavItem = { to: "/app/admin", icon: ShieldCheck, label: "Admin", exact: false };
+
+  const sections: NavSection[] = navSections.map((s) => ({ ...s, items: [...s.items] }));
+  const teamSection: NavSection = { title: "Workspace", items: [teamItem, ...(user?.isAdmin ? [adminItem] : [])] };
+  const allSections = [...sections, teamSection];
 
   return (
     <aside
@@ -126,7 +152,10 @@ export function AppSidebar({ mobile }: AppSidebarProps) {
       <div className="shrink-0">
         {!isCollapsed && (
           <div className="px-3 pb-3 pt-3">
-            <button className="flex w-full items-center gap-2 rounded-lg border border-neutral-800 bg-neutral-900/50 px-3 py-2 text-left transition-colors hover:bg-neutral-800/50">
+            <button
+              onClick={openPalette}
+              className="flex w-full items-center gap-2 rounded-lg border border-neutral-800 bg-neutral-900/50 px-3 py-2 text-left transition-colors hover:bg-neutral-800/50"
+            >
               <Search className="h-3.5 w-3.5 text-neutral-500" strokeWidth={2} />
               <span className="flex-1 text-xs text-neutral-500">Search...</span>
               <kbd className="hidden rounded bg-neutral-800 px-1.5 py-0.5 text-[10px] text-neutral-600 sm:inline">⌘K</kbd>
@@ -135,7 +164,11 @@ export function AppSidebar({ mobile }: AppSidebarProps) {
         )}
         {isCollapsed && (
           <div className="flex justify-center py-3">
-            <button className="rounded-lg p-2 text-neutral-500 transition-colors hover:bg-neutral-800 hover:text-neutral-300">
+            <button
+              onClick={openPalette}
+              title="Search (⌘K)"
+              className="rounded-lg p-2 text-neutral-500 transition-colors hover:bg-neutral-800 hover:text-neutral-300"
+            >
               <Search className="h-4 w-4" strokeWidth={2} />
             </button>
           </div>
@@ -144,7 +177,7 @@ export function AppSidebar({ mobile }: AppSidebarProps) {
 
       {/* Navigation */}
       <nav className="flex-1 min-h-0 space-y-1 overflow-y-auto px-2 pt-2 pb-3">
-        {navSections.map((section) => (
+        {allSections.map((section) => (
           <div key={section.title} className="mb-1">
             {!isCollapsed && (
               <p className="mb-1 px-3 pt-3 pb-1 text-[10px] font-semibold tracking-widest text-neutral-600 uppercase">
@@ -201,16 +234,30 @@ export function AppSidebar({ mobile }: AppSidebarProps) {
       {/* User profile */}
       <div className={cn("shrink-0 py-3", isCollapsed ? "px-2" : "px-3")}>
         <div className={cn("flex items-center rounded-lg transition-colors hover:bg-neutral-900", isCollapsed ? "justify-center px-0 py-2" : "gap-2.5 px-2 py-2")}>
-          <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-neutral-600 text-[10px] font-bold text-white">
-            KM
-          </div>
+          <Link
+            to="/app/account"
+            onClick={handleNavClick}
+            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-neutral-600 text-[10px] font-bold text-white hover:bg-neutral-500"
+            title={user?.displayName ?? "Account"}
+          >
+            {initials}
+          </Link>
           {!isCollapsed && (
             <>
-              <div className="flex-1 min-w-0">
-                <p className="truncate text-xs font-medium text-neutral-200">Dr. K. Mohamed</p>
-                <p className="truncate text-[10px] text-neutral-500">IPC Lead · Admin</p>
-              </div>
-              <LogOut className="h-3.5 w-3.5 shrink-0 text-neutral-500 hover:text-neutral-300" strokeWidth={1.8} />
+              <Link to="/app/account" onClick={handleNavClick} className="flex-1 min-w-0 text-left">
+                <p className="truncate text-xs font-medium text-neutral-200">{user?.displayName ?? "Account"}</p>
+                <p className="truncate text-[10px] text-neutral-500">
+                  {user?.title ?? (user?.isAdmin ? "Administrator" : "Member")}
+                  {user?.isAdmin ? " · Admin" : ""}
+                </p>
+              </Link>
+              <button
+                onClick={handleLogout}
+                title="Log out"
+                className="rounded-md p-1 text-neutral-500 hover:bg-neutral-800 hover:text-neutral-200"
+              >
+                <LogOut className="h-3.5 w-3.5 shrink-0" strokeWidth={1.8} />
+              </button>
             </>
           )}
         </div>

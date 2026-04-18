@@ -1,7 +1,9 @@
 import type { ReactNode } from "react";
 import { AppSidebar } from "./app-sidebar";
 import { SidebarProvider, useSidebar } from "./sidebar-context";
-import { AiChatPanel } from "../ai-chat/chat-panel";
+import { AiChatDrawer } from "../ai-chat/chat-panel";
+import { ChatProvider } from "../ai-chat/chat-context";
+import { CommandPaletteProvider } from "./command-palette";
 
 interface AppLayoutProps {
   children: ReactNode;
@@ -31,7 +33,7 @@ function LayoutInner({ children }: AppLayoutProps) {
         {children}
       </main>
 
-      <AiChatPanel />
+      <AiChatDrawer />
     </div>
   );
 }
@@ -39,7 +41,11 @@ function LayoutInner({ children }: AppLayoutProps) {
 export function AppLayout({ children }: AppLayoutProps) {
   return (
     <SidebarProvider>
-      <LayoutInner>{children}</LayoutInner>
+      <CommandPaletteProvider>
+        <ChatProvider>
+          <LayoutInner>{children}</LayoutInner>
+        </ChatProvider>
+      </CommandPaletteProvider>
     </SidebarProvider>
   );
 }
